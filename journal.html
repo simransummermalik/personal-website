@@ -6,79 +6,123 @@
   <title>Summer — Journal</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* --- Journal-only styles (uses your :root palette) --- */
+    /* ---- journal-only styles (keeps your global css intact) ---- */
     .journal-wrap{max-width:var(--maxw);margin:0 auto;padding:22px}
     .journal-top{display:flex;align-items:baseline;gap:12px;margin:6px 0 12px}
     .journal-title{font-size:56px;line-height:1.1;margin:0}
     .journal-count{color:var(--muted);font-size:22px}
-    .journal-row{display:grid;gap:14px;margin:12px 0 18px}
+
     .panel-soft{
-      background: rgba(12,18,24,.58);        /* see-through */
+      background: rgba(12,18,24,.58);
       border: 1px solid rgba(15,26,34,.75);
-      border-radius: 14px;                   /* rounded */
-      box-shadow: none;
-      padding: 14px;
+      border-radius: 14px;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
+      padding:14px;
+      margin-bottom:10px;
     }
     .journal-search{
       width:100%;padding:10px 12px;font:18px/1.6 'VT323',monospace;
       color:var(--ink);background:rgba(22,34,43,.55);
       border:1px solid rgba(38,53,64,.85);border-radius:12px;outline:none;
     }
-    .journal-search::placeholder{color:#c7d3db}
-    .status{color:var(--muted);padding-left:2px}
+    .status{color:var(--muted);padding-left:2px;margin-top:6px}
 
-    /* tag buttons (chips) */
-    .chipbar{display:flex;flex-wrap:wrap;gap:8px}
+    .chipbar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
     .chip{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:6px 12px;border-radius:999px;cursor:pointer;
-      text-decoration:none;font:18px/1 'VT323',monospace;
-      color:var(--ink);background:rgba(255,255,255,.07);
+      display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;cursor:pointer;
+      font:18px/1 'VT323',monospace;color:var(--ink);background:rgba(255,255,255,.07);
       border:1px solid rgba(255,255,255,.22);
-      transition:transform .08s ease,background .12s ease,border-color .12s ease,opacity .12s ease;
-      user-select:none;
+      transition:transform .08s ease,background .12s ease,border-color .12s ease;
     }
     .chip:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.32);transform:translateY(-1px)}
-    .chip.active{background:rgba(240,181,103,.18);border-color:rgba(240,181,103,.55);box-shadow:0 0 0 2px rgba(240,181,103,.15) inset}
-    .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);filter:saturate(1.05)}
+    .chip.active{background:rgba(240,181,103,.18);border-color:rgba(240,181,103,.55)}
+    .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
 
-    /* grid + cards */
     .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:6px}
     @media (min-width:860px){.grid{grid-template-columns:1fr 1fr}}
     .card{
       background:rgba(12,18,24,.58);
       border:1px solid rgba(15,26,34,.78);
       border-radius:14px;padding:16px 16px 14px;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
       transition:transform .12s ease, background .12s ease, border-color .12s ease;
+      cursor:pointer;
     }
     .card:hover{transform:translateY(-2px);background:rgba(12,18,24,.66);border-color:rgba(15,26,34,.95)}
     .post-title{color:var(--teal);text-decoration:none;font-weight:700}
-    .post-title:hover{color:#9fe2dc}
     .post-meta{color:#d7e2ea;margin-top:4px}
     .post-summary{color:#eaf1f4;margin:8px 0 0}
-
-    /* tiny tag pills inside cards (match your ask: rounded + see-through) */
     .pills{margin-top:10px}
     .pill{
       display:inline-block;margin:6px 6px 0 0;padding:3px 10px;border-radius:999px;
       color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);font-size:16px
     }
 
-    /* header bar (journal-only) */
-    .journal-head{position:sticky;top:0;z-index:2;background:rgba(12,18,24,.7);backdrop-filter:blur(8px);border-bottom:1px solid rgba(15,26,34,.9)}
-    .journal-head .nav a{color:#ffd394} .journal-head .nav a:hover{color:#fff1d9}
+    /* ---- fullscreen overlay modal ---- */
+    .overlay{
+      position:fixed; inset:0; z-index:9999;
+      display:none;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(10,10,10,0.25), transparent 60%),
+                  rgba(5,8,12,.75);
+      backdrop-filter: blur(8px);
+    }
+    .overlay.show{display:block}
+    .sheet{
+      position:absolute; inset:auto; left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      width:min(1100px, 92vw);
+      max-height:86vh; overflow:hidden;
+      background:rgba(12,18,24,.78);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:16px;
+      box-shadow:0 20px 60px rgba(0,0,0,.45);
+      color:var(--ink);
+      display:grid; grid-template-columns: 1fr;
+    }
+    .sheet-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 6px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
+    .sheet-title{font-size:30px;margin:0}
+    .sheet-date{color:#cfe0ea}
+    .close{
+      appearance:none;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);
+      color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;font:18px 'VT323',monospace;
+    }
+    .close:hover{background:rgba(255,255,255,.14)}
+    .sheet-body{display:grid; grid-template-columns:1fr; gap:12px; padding:12px; overflow:auto}
+    @media (min-width:920px){ .sheet-body{ grid-template-columns: 60% 40%; } }
+
+    /* gallery */
+    .gallery{
+      position:relative; border-radius:12px; overflow:hidden;
+      background:#0b1218; border:1px solid rgba(255,255,255,.12); min-height:320px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .gitem{position:absolute; inset:0; display:none; align-items:center; justify-content:center}
+    .gitem.show{display:flex}
+    .gitem img, .gitem video{max-width:100%; max-height:100%; object-fit:contain}
+    .gprev,.gnext{
+      position:absolute; top:50%; transform:translateY(-50%);
+      border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.08);
+      color:var(--ink); border-radius:10px; padding:6px 10px; cursor:pointer;
+      font:18px 'VT323',monospace;
+    }
+    .gprev{left:10px} .gnext{right:10px}
+    .gprev:hover,.gnext:hover{background:rgba(255,255,255,.14)}
+    .dots{position:absolute; bottom:8px; left:0; right:0; display:flex; justify-content:center; gap:6px}
+    .dot{width:8px;height:8px;border-radius:50%; background:rgba(255,255,255,.35)}
+    .dot.active{background:var(--amber)}
+
+    .sheet-copy{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(255,255,255,.06)}
+    .sheet-tags{margin-top:8px}
   </style>
 </head>
 <body>
-  <!-- Background video (file at /assets/background_2.mp4) -->
+  <!-- Background video -->
   <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/background_2_poster.jpg">
     <source src="assets/background_2.mp4" type="video/mp4"/>
   </video>
 
-  <header class="site-head journal-head">
+  <header class="site-head" style="background:rgba(12,18,24,.7);backdrop-filter:blur(8px)">
     <div class="brand"> </div>
     <nav class="nav">
       <a href="index.html">← Home</a>
@@ -91,18 +135,41 @@
       <span id="count" class="journal-count"></span>
     </div>
 
-    <!-- search + status -->
-    <div class="journal-row panel-soft">
+    <div class="panel-soft">
       <input id="search" class="journal-search" type="search" placeholder="Search title, tags, or summary…"/>
-      <div class="status" id="status">Loading posts…</div>
+      <div id="status" class="status">Loading posts…</div>
     </div>
 
-    <!-- tag chips -->
-    <div id="chipbar" class="chipbar" style="margin-bottom:10px;"></div>
-
-    <!-- cards -->
+    <div id="chipbar" class="chipbar"></div>
     <section id="posts" class="grid" aria-live="polite"></section>
   </main>
+
+  <!-- Fullscreen overlay -->
+  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Journal post">
+    <div class="sheet" role="document">
+      <div class="sheet-head">
+        <div>
+          <h2 id="ov-title" class="sheet-title">Title</h2>
+          <div id="ov-date" class="sheet-date"></div>
+        </div>
+        <button id="ov-close" class="close" type="button">✕ Close</button>
+      </div>
+
+      <div class="sheet-body">
+        <div class="gallery">
+          <button class="gprev" type="button" id="gprev">←</button>
+          <button class="gnext" type="button" id="gnext">→</button>
+          <div id="gwrap"></div>
+          <div id="gdots" class="dots"></div>
+        </div>
+
+        <div class="sheet-copy">
+          <div id="ov-body" class="post-summary"></div>
+          <div id="ov-tags" class="sheet-tags"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const postsEl = document.getElementById('posts');
@@ -111,8 +178,20 @@
     const searchEl = document.getElementById('search');
     const chipbar = document.getElementById('chipbar');
 
-    let ALL = [];          // all posts
-    let ACTIVE_TAGS = new Set();  // selected filters
+    const overlay = document.getElementById('overlay');
+    const ovTitle = document.getElementById('ov-title');
+    const ovDate  = document.getElementById('ov-date');
+    const ovBody  = document.getElementById('ov-body');
+    const ovTags  = document.getElementById('ov-tags');
+    const ovClose = document.getElementById('ov-close');
+    const gwrap   = document.getElementById('gwrap');
+    const gdots   = document.getElementById('gdots');
+    const gprev   = document.getElementById('gprev');
+    const gnext   = document.getElementById('gnext');
+
+    let ALL = [];
+    let ACTIVE_TAGS = new Set();
+    let galleryIndex = 0;
 
     const CANDIDATES = ['data/journal.json','/data/journal.json'];
 
@@ -128,24 +207,26 @@
             statusEl.textContent = '';
             buildChips(ALL);
             render(ALL);
-            break;
+            return;
           }
         }catch(e){}
       }
-      if(!ALL.length){
-        statusEl.textContent = "Couldn't load data/journal.json — showing a demo post.";
-        ALL = [{
-          title:"event name",
-          date:new Date().toISOString().slice(0,10),
-          summary:"What worked for turnout and what I’d change next time.",
-          tags:["HAVK","events"],
-          url:"#"
-        }];
-        buildChips(ALL); render(ALL);
-      }
+      statusEl.textContent = "Couldn't load data/journal.json — showing a demo post.";
+      ALL = [{
+        title:"event name",
+        date:new Date().toISOString().slice(0,10),
+        summary:"What worked for turnout and what I’d change next time.",
+        body:"Longer reflection goes here. Add <b>HTML</b> if you want.",
+        tags:["HAVK","events"],
+        media:[
+          {"type":"image","src":"assets/sample1.jpg","alt":"crowd"},
+          {"type":"image","src":"assets/sample2.jpg","alt":"stage"}
+        ]
+      }];
+      buildChips(ALL); render(ALL);
     })();
 
-    // Build tag filter buttons
+    // Build tag chips
     function buildChips(list){
       const tagCounts = {};
       list.forEach(p => (Array.isArray(p.tags)?p.tags:[]).forEach(t => tagCounts[t]=(tagCounts[t]||0)+1));
@@ -153,10 +234,9 @@
       chipbar.innerHTML = '';
       if(!tags.length) return;
 
-      // “All” button
       chipbar.appendChild(makeChip('All', () => {
         ACTIVE_TAGS.clear();
-        Array.from(chipbar.querySelectorAll('.chip')).forEach(c=>c.classList.remove('active'));
+        chipbar.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
         render(filtered());
       }, true));
 
@@ -169,19 +249,16 @@
         chipbar.appendChild(chip);
       });
     }
-
     function makeChip(label, onClick, isAll=false){
       const el = document.createElement('button');
-      el.type='button';
-      el.className='chip';
-      el.innerHTML = isAll ? `<span class="dot" style="background:var(--teal)"></span>${label}` : `<span class="dot"></span>${label}`;
+      el.type='button'; el.className='chip';
+      el.innerHTML = `<span class="dot" style="background:${isAll?'var(--teal)':'var(--amber)'}"></span>${label}`;
       el.addEventListener('click', onClick);
       return el;
     }
 
-    // Search wiring
+    // Search
     searchEl.addEventListener('input', () => render(filtered()));
-
     function filtered(){
       const q = searchEl.value.trim().toLowerCase();
       let list = ALL;
@@ -190,37 +267,98 @@
       }
       if (q){
         list = list.filter(p => [
-          p.title||'', p.summary||'', ...(Array.isArray(p.tags)?p.tags:[])
+          p.title||'', p.summary||'', p.body||'', ...(Array.isArray(p.tags)?p.tags:[])
         ].join(' ').toLowerCase().includes(q));
       }
       return list;
     }
 
+    // Cards
     function render(list){
       postsEl.innerHTML = '';
       countEl.textContent = `(${list.length})`;
-      if(!list.length){ statusEl.textContent = 'No matching posts.'; return; }
-      statusEl.textContent = '';
-      list.forEach(p=>{
+      statusEl.textContent = list.length ? '' : 'No matching posts.';
+      list.forEach((p, idx)=>{
         const card = document.createElement('article');
         card.className = 'card';
+        card.setAttribute('role','button');
+        card.setAttribute('tabindex','0');
         card.innerHTML = `
-          <a class="post-title" href="${p.url || '#'}">${safe(p.title) || 'Untitled'}</a>
+          <div class="post-title">${safe(p.title) || 'Untitled'}</div>
           <div class="post-meta">${p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : ''}</div>
           ${p.summary ? `<p class="post-summary">${safe(p.summary)}</p>` : ``}
           ${(Array.isArray(p.tags)&&p.tags.length) ? `<div class="pills">${p.tags.map(t=>`<span class="pill">${safe(t)}</span>`).join('')}</div>` : ``}
         `;
+        card.addEventListener('click', ()=>openOverlay(p));
+        card.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' ') openOverlay(p); });
         postsEl.appendChild(card);
       });
+    }
+
+    // Overlay open/close
+    function openOverlay(p){
+      ovTitle.textContent = p.title || 'Untitled';
+      ovDate.textContent  = p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
+      ovBody.innerHTML    = (p.body ? p.body : (p.summary||'')).toString();
+      ovTags.innerHTML    = (Array.isArray(p.tags)&&p.tags.length) ? p.tags.map(t=>`<span class="pill">${safe(t)}</span>`).join('') : '';
+
+      // build gallery
+      buildGallery(p.media || []);
+      overlay.classList.add('show');
+      document.body.style.overflow='hidden';
+    }
+    function closeOverlay(){
+      overlay.classList.remove('show');
+      document.body.style.overflow='';
+      gwrap.innerHTML=''; gdots.innerHTML='';
+    }
+    overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeOverlay(); });
+    ovClose.addEventListener('click', closeOverlay);
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeOverlay(); });
+
+    // Gallery
+    function buildGallery(media){
+      gwrap.innerHTML=''; gdots.innerHTML=''; galleryIndex=0;
+      if(!media.length){
+        const empty = document.createElement('div');
+        empty.className='gitem show'; empty.textContent='No media';
+        gwrap.appendChild(empty); return;
+      }
+      media.forEach((m,i)=>{
+        const it = document.createElement('div'); it.className='gitem' + (i===0?' show':'');
+        if(m.type==='video'){
+          const v=document.createElement('video'); v.src=m.src; v.controls=true; v.playsInline=true; v.style.maxHeight='100%';
+          it.appendChild(v);
+        }else{
+          const img=document.createElement('img'); img.src=m.src; img.alt=m.alt||'';
+          it.appendChild(img);
+        }
+        gwrap.appendChild(it);
+
+        const d=document.createElement('div'); d.className='dot'+(i===0?' active':'');
+        d.addEventListener('click',()=>show(i)); gdots.appendChild(d);
+      });
+      gprev.onclick=()=>show((galleryIndex-1+media.length)%media.length);
+      gnext.onclick=()=>show((galleryIndex+1)%media.length);
+      window.addEventListener('keydown', galleryKey);
+      function galleryKey(e){
+        if(!overlay.classList.contains('show')){ window.removeEventListener('keydown', galleryKey); return; }
+        if(e.key==='ArrowLeft') gprev.click();
+        if(e.key==='ArrowRight') gnext.click();
+      }
+      function show(i){
+        const items=[...gwrap.children], dots=[...gdots.children];
+        items.forEach(el=>el.classList.remove('show'));
+        dots.forEach(el=>el.classList.remove('active'));
+        items[i].classList.add('show'); dots[i].classList.add('active'); galleryIndex=i;
+      }
     }
 
     function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
     // Respect reduced motion
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (prefersReduced.matches) {
-      const vid = document.querySelector('.bg-video'); vid && vid.pause && vid.pause();
-    }
+    if (prefersReduced.matches) { const vid=document.querySelector('.bg-video'); vid && vid.pause && vid.pause(); }
   </script>
 </body>
 </html>

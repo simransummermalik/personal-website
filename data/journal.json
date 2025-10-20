@@ -1,9 +1,14 @@
 [
   {
-    "title": "event name",
-    "date": "2025-10-18",
+    "title": "HAVK: Chaos and Candy",
+    "date": "2025-10-17",
     "tags": ["HAVK", "events"],
     "summary": "What worked for turnout and what I’d change next time.",
-    "url": "https://example.com"
+    "body": "<p>Longer reflection here. What we did for outreach, what flopped, and the exact snack-to-fun ratio 🍬.</p>",
+    "media": [
+      { "type": "image", "src": "assets/havk1.jpg", "alt": "Room filling up" },
+      { "type": "image", "src": "assets/havk2.jpg", "alt": "Improv bit" },
+      { "type": "video", "src": "assets/havk_clip.mp4" }
+    ]
   }
 ]
