@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>summer — campfire story</title>
+  <meta name="description" content="A creative, flat personal site with a looping background video and dynamic content." />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Fullscreen background video -->
+  <video id="bg-video" class="bg-video" autoplay muted loop playsinline poster="assets/background.jpg">
+    <source src="assets/background.mp4" type="video/mp4" />
+  </video>
+  <div id="fireflies" aria-hidden="true"></div>
+
+  <header class="site-head">
+    <div class="brand">summer</div>
+    <nav class="nav">
+      <a href="#cover">cover</a>
+      <a href="#about">about</a>
+      <a href="#projects">projects</a>
+      <a href="#research">research</a>
+      <a href="#experience">experience</a>
+      <a href="#education">education</a>
+      <a href="#skills">skills</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- COVER -->
+    <section id="cover" class="page">
+      <h1>hi, i’m summer.</h1>
+      <p class="deck">cs × biology</p>
+      <p class="links">
+        <a class="btn" href="#projects">see projects</a>
+        <a class="btn alt" href="#contact">say hi</a>
+      </p>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="page">
+      <h2>about</h2>
+      <p id="aboutText">
+        I’m a CS × Biology (bioinformatics) undergrad student
+      </p>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="page">
+      <h2>projects</h2>
+      <div class="projects" id="projectsGrid">
+        <!-- Fallback static rows (replaced by JSON if present) -->
+        <article class="row">
+          <div class="rule"></div>
+          <div class="row-body">
+            <h3>GeneCrafter</h3>
+            <p>DNA → playful traits with short “why it works” notes.</p>
+            <div class="tags">python · flask · biopython</div>
+          </div>
+        </article>
+        <article class="row">
+          <div class="rule"></div>
+          <div class="row-body">
+            <h3>SYN</h3>
+            <p>Browser sign-language recognition (React + MediaPipe). 1st at UNCC Hackathon.</p>
+            <div class="tags">react · mediapipe · dl</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section id="research" class="page">
+      <h2>research</h2>
+      <div id="researchList" class="research-list">
+        <!-- Fallback example (replaced by JSON if present) -->
+        <article class="row">
+          <div class="rule"></div>
+          <div class="row-body">
+            <h3>Current Focus</h3>
+            <p>Modeling resistance mechanisms in EGFR-mutant cancers using curated knowledgebases and ML.</p>
+            <p class="progress">Progress: baseline pipeline built; model tuning next.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="page">
+      <h2>experience</h2>
+      <ul id="expList" class="bullets">
+        <li>HAVK — Co-Founder & President (2025–present): 700+ member hackathon org; ops, partnerships, mentorship.</li>
+        <li>The Jackson Laboratory — Cancer Genomics Intern (Jun–Jul 2025): pipelines; resistance modeling via OncoKB/COSMIC/CIViC.</li>
+      </ul>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="page">
+      <h2>education</h2>
+      <ul id="eduList" class="bullets">
+        <li>UNC Charlotte — B.S. Computer Science & Biology (Bioinformatics) (in progress)</li>
+      </ul>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="page">
+      <h2>skills</h2>
+      <p id="skillsLine">python · java · c/c++ · javascript/react · flask · pandas/numpy · pytorch/tensorflow · biopython · linux · docker · git</p>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="page">
+      <h2>contact</h2>
+      <p>email: <a id="emailLink" href="mailto:simransummermalik@gmail.com">simransummermalik@gmail.com</a></p>
+      <p class="links">
+        <a id="githubLink" class="btn" href="https://github.com/simransummermalik" target="_blank" rel="noopener">github</a>
+        <a id="linkedinLink" class="btn alt" href="https://www.linkedin.com/in/summermalik/" target="_blank" rel="noopener">linkedin</a>
+        <a class="btn" href="resume.pdf" target="_blank" rel="noopener">résumé</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    © <span id="y"></span> summer — small web, warm campfire.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

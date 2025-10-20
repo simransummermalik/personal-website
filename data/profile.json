@@ -1,0 +1,34 @@
+{
+  "about": "I’m a CS × Biology (bioinformatics) undergrad student",
+  "email": "CANNOT SEE RIGHT NOW!!!!",
+  "links": {
+    "github": "https://github.com/simransummermalik",
+    "linkedin": "https://www.linkedin.com/in/summermalik/"
+  },
+  "projects": [
+    { "title": "GeneCrafter", "description": "DNA → playful traits with short “why it works” notes.", "tags": ["python","flask","biopython"] },
+    { "title": "SYN", "description": "Browser sign-language recognition (React + MediaPipe). 1st at UNCC Hackathon.", "tags": ["react","mediapipe","dl"] },
+    { "title": "QML Torch", "description": "Hybrid quantum-classical ML framework (project lead at CAIR).", "tags": ["pytorch","pennylane"] },
+    { "title": "BioForge", "description": "Humanity vs pathogen evolution sim (3rd on Devpost 2025).", "tags": ["python","react"] }
+  ],
+  "research": [
+    {
+      "title": "Cancer Genomics — The Jackson Laboratory",
+      "description": "Building a resistance-prediction pipeline for EGFR-mutant cancers using OncoKB, COSMIC, and CIViC; integrating pathway mapping and mutation impact scoring.",
+      "progress": "Model tuning (Python, Biopython); validating on curated cohorts."
+    },
+    {
+      "title": "QML Torch Research — CAIR Lab",
+      "description": "Exploring hybrid quantum-classical models for small biological datasets; testing quantum kernels for classification.",
+      "progress": "Preparing poster for undergraduate research symposium."
+    }
+  ],
+  "experience": [
+    { "role": "Co-Founder & President", "org": "HAVK", "when": "2025–present", "summary": "700+ member hackathon org; ops, partnerships, mentorship." },
+    { "role": "Cancer Genomics Intern", "org": "The Jackson Laboratory", "when": "Jun–Jul 2025", "summary": "Pipelines; resistance modeling via OncoKB/COSMIC/CIViC." }
+  ],
+  "education": [
+    { "school": "UNC Charlotte", "degree": "B.S. Computer Science & Biology (Bioinformatics)", "when": "in progress" }
+  ],
+  "skills": ["python","java","c/c++","javascript/react","flask","pandas/numpy","pytorch/tensorflow","biopython","linux","docker","git"]
+}

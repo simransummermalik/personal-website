@@ -1,0 +1,126 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root{
+  --bg:#0a0f14;          /* deep midnight */
+  --ink:#eaf1f4;         /* text */
+  --muted:#b9c6cf;       /* secondary */
+  --teal:#6fb3b0;        /* accent */
+  --amber:#f0b567;       /* campfire accent */
+  --panel:#0c1218;       /* solid panel (no transparency) */
+  --edge:#0f1a22;        /* solid border */
+  --maxw:1100px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); background:var(--bg);
+  font:18px/1.7 'VT323', monospace;
+}
+
+/* Background video */
+.bg-video{
+  position:fixed; inset:0; width:100%; height:100%;
+  object-fit:cover; z-index:-1; filter:brightness(.9) saturate(1.05);
+}
+
+/* Header */
+.site-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px; border-bottom:1px solid #0c1a22; background:#0b1218;
+}
+.brand{font-size:24px; letter-spacing:.5px; color:var(--amber)}
+.nav a{
+  color:#9fb0bd; text-decoration:none; margin-left:16px; font-size:18px;
+}
+.nav a:hover{color:#ffd394}
+
+/* Pages (FLAT, NO BUBBLES) */
+main{max-width:var(--maxw); margin:0 auto; padding:22px}
+.page{
+  background:var(--panel); border:1px solid var(--edge);
+  border-radius:0; box-shadow:none; padding:28px; margin:28px 0;
+}
+h1{font-size:56px; line-height:1.1; margin:0 0 8px}
+h2{font-size:26px; color:var(--teal); margin:0 0 12px}
+.deck{color:var(--muted)}
+.links{display:flex; gap:12px; flex-wrap:wrap}
+.btn{
+  display:inline-block; padding:8px 16px; border:1px solid #263540;
+  background:#16222b; color:var(--ink); text-decoration:none;
+}
+.btn.alt{background:#16292b; border-color:#27423f}
+.btn:hover{background:#1d2e3a; color:#ffd394}
+
+/* Projects as FLAT rows */
+.projects{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.row{display:flex; border:1px solid var(--edge); background:#0e1620}
+.row .rule{width:4px; background:linear-gradient(var(--teal), var(--amber))}
+.row .row-body{padding:16px 18px 18px}
+.row h3{font-size:30px; margin:0 0 6px}
+.row p{margin:0 0 8px; color:#c6d3dc}
+.tags{color:#8fa3b2; font-size:16px}
+.row:hover{background:#101b26}
+
+/* Research list (single column) */
+.research-list{display:grid; grid-template-columns:1fr; gap:12px}
+.progress{color:#ffd394; font-style:italic; margin-top:4px}
+
+/* Lists */
+.bullets{margin:0; padding-left:18px}
+.bullets li{margin:6px 0}
+
+/* Footer */
+.site-foot{padding:30px; text-align:center; color:#9db0be; border-top:1px solid #0c1a22}
+
+/* Responsive */
+@media (max-width:960px){
+  .projects{grid-template-columns:1fr}
+  h1{font-size:46px}
+}
+/* --- Fireflies --- */
+#fireflies {
+  position: fixed;
+  inset: 0;
+  z-index: 0;                 /* video is -1, content panels are above 0 */
+  pointer-events: none;       /* never block clicks */
+}
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 223, 128, 0.95) 0%, rgba(255, 223, 128, 0.4) 40%, transparent 70%);
+  box-shadow: 0 0 12px 4px rgba(240, 181, 103, 0.45);
+  opacity: 0;
+  filter: saturate(1.05);
+  /* each gets custom properties from JS */
+  animation:
+    firefly-float var(--ff-duration, 12s) linear infinite,
+    firefly-flicker var(--ff-flicker, 2.6s) ease-in-out infinite;
+  animation-delay: var(--ff-delay, 0s);
+  transform: translate3d(0,0,0);
+}
+
+/* Vertical float (upwards), with slight curve via translate + skew */
+@keyframes firefly-float {
+  0%   { opacity: 0; transform: translate(var(--start-x), var(--start-y)) scale(var(--ff-scale, 1)); }
+  8%   { opacity: 1; }
+  50%  { transform: translate(calc(var(--start-x) + var(--curve-x)), calc(var(--start-y) - 40vh)) scale(var(--ff-scale, 1)); }
+  100% { opacity: 0; transform: translate(calc(var(--start-x) + var(--curve-x) * 1.6), calc(var(--start-y) - 85vh)) scale(var(--ff-scale, 1)); }
+}
+
+/* Gentle brightness twinkle */
+@keyframes firefly-flicker {
+  0%, 100% { filter: brightness(1) saturate(1.05); }
+  25%      { filter: brightness(1.25) saturate(1.15); }
+  60%      { filter: brightness(0.85) saturate(0.95); }
+}
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+  .firefly { animation: firefly-flicker 4s ease-in-out infinite; }
+  @keyframes firefly-float { 0%,100% { transform: translate(var(--start-x), var(--start-y)); opacity: 1; } }
+}
