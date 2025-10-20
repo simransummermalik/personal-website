@@ -5,37 +5,42 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Summer — Journal</title>
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    .page-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
-    .journal-header { display:flex; align-items:baseline; gap:10px; margin-bottom:1.25rem; }
-    #status { font-size:.95rem; color:#666; margin-bottom:.75rem; }
-    #search { padding:8px 10px; border:1px solid #ccc; border-radius:8px; width:100%; margin-bottom:1rem; }
-    .posts { display:grid; gap:1rem; }
-    .post-card { border:1px solid #eaeaea; border-radius:12px; padding:1rem; background:#fff; }
-    .post-card:hover { background:#fafafa; }
-    .post-title { font-weight:700; text-decoration:none; font-size:1.05rem; }
-    .post-meta { color:#777; font-size:.9rem; margin-top:4px; }
-    .post-summary { margin-top:.5rem; }
-    .pill { display:inline-block; border:1px solid #ddd; border-radius:999px; padding:2px 8px; margin:6px 6px 0 0; font-size:.8rem; color:#555; }
-    .error { color:#b00020; }
-  </style>
 </head>
-<body>
-  <header class="site-header">
-    <nav class="nav" style="padding:12px 16px;">
-      <a href="index.html">← Home</a>
+<body class="journal-body">
+  <!-- Background video -->
+  <video
+    id="bgvid"
+    class="bg-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+    poster="assets/background_2_poster.jpg"
+  >
+    <source src="assets/background_2.mp4" type="video/mp4" />
+  </video>
+  <div class="bg-scrim" aria-hidden="true"></div>
+
+  <header class="site-header journal-headerbar">
+    <nav class="nav">
+      <a href="index.html" class="nav-link">← Home</a>
     </nav>
   </header>
 
-  <main class="page-wrap">
-    <div class="journal-header">
-      <h1>Journal</h1>
-      <span id="count"></span>
+  <main class="journal-wrap">
+    <div class="journal-top">
+      <h1 class="journal-title">Journal</h1>
+      <span id="count" class="journal-count"></span>
     </div>
 
-    <div id="status">Loading posts…</div>
-    <input id="search" type="search" placeholder="Search title, tags, or summary…">
-    <section id="posts" class="posts" aria-live="polite"></section>
+    <div class="journal-controls glass">
+      <input id="search" type="search" class="journal-search" placeholder="Search title, tags, or summary…" />
+      <span id="status" class="journal-status">Loading posts…</span>
+    </div>
+
+    <section id="posts" class="journal-grid" aria-live="polite"></section>
   </main>
 
   <script>
@@ -43,10 +48,8 @@
     const countEl  = document.getElementById('count');
     const statusEl = document.getElementById('status');
     const searchEl = document.getElementById('search');
-
     let ALL = [];
 
-    // Try both relative and root paths (works on /journal.html and on Vercel)
     const CANDIDATES = ['data/journal.json', '/data/journal.json'];
 
     (async function load(){
@@ -56,22 +59,20 @@
           if (!r.ok) continue;
           const data = await r.json();
           if (Array.isArray(data)) {
-            ALL = data
-              .filter(x => x && typeof x === 'object')
-              .sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+            ALL = data.filter(x => x && typeof x === 'object')
+                      .sort((a,b)=> new Date(b.date||0) - new Date(a.date||0));
             statusEl.textContent = '';
             render(ALL);
             hookSearch();
             return;
           }
-        } catch(e) { /* try next candidate */ }
+        } catch(e) {}
       }
-      // Fallback demo post so the page never looks blank
-      statusEl.innerHTML = "<span class='error'>Couldn’t load <code>data/journal.json</code>. Showing a demo post.</span>";
+      statusEl.textContent = "Couldn't load data/journal.json — showing a demo post.";
       ALL = [{
-        title: "Demo post — set up complete",
+        title: "Demo post — setup complete",
         date: new Date().toISOString().slice(0,10),
-        summary: "Your journal page is wired. Add posts in data/journal.json.",
+        summary: "Your journal is wired. Add posts in data/journal.json.",
         tags: ["setup","journal"],
         url: "index.html"
       }];
@@ -82,10 +83,7 @@
     function render(list){
       postsEl.innerHTML = '';
       countEl.textContent = `(${list.length})`;
-      if (!list.length){
-        statusEl.textContent = 'No posts yet.';
-        return;
-      }
+      if (!list.length){ statusEl.textContent = 'No posts yet.'; return; }
       list.forEach(p => {
         const title = safe(p.title) || 'Untitled';
         const date  = p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
@@ -93,12 +91,12 @@
         const url   = p.url || '#';
         const tags  = Array.isArray(p.tags) ? p.tags : [];
         const card = document.createElement('article');
-        card.className = 'post-card';
+        card.className = 'journal-card glass';
         card.innerHTML = `
           <a class="post-title" href="${url}">${title}</a>
           <div class="post-meta">${date}</div>
           ${sum ? `<p class="post-summary">${sum}</p>` : ``}
-          ${tags.length ? `<div>${tags.map(t => `<span class="pill">${safe(t)}</span>`).join('')}</div>` : ``}
+          ${tags.length ? `<div class="post-tags">${tags.map(t => `<span class="pill">${safe(t)}</span>`).join('')}</div>` : ``}
         `;
         postsEl.appendChild(card);
       });
@@ -120,6 +118,11 @@
     function safe(s){
       return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
+
+    // Accessibility: respect reduced motion
+    const vid = document.getElementById('bgvid');
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReduced.matches && vid) { vid.removeAttribute('autoplay'); vid.pause?.(); }
   </script>
 </body>
 </html>
