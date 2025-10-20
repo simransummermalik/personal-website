@@ -5,27 +5,83 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Summer — Journal</title>
   <link rel="stylesheet" href="styles.css" />
-</head>
-<body class="journal-body">
-  <!-- Background video -->
-  <video
-    id="bgvid"
-    class="bg-video"
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="auto"
-    aria-hidden="true"
-    poster="assets/background_2_poster.jpg"
-  >
-    <source src="assets/background_2.mp4" type="video/mp4" />
-  </video>
-  <div class="bg-scrim" aria-hidden="true"></div>
+  <style>
+    /* --- Journal-only styles (uses your :root palette) --- */
+    .journal-wrap{max-width:var(--maxw);margin:0 auto;padding:22px}
+    .journal-top{display:flex;align-items:baseline;gap:12px;margin:6px 0 12px}
+    .journal-title{font-size:56px;line-height:1.1;margin:0}
+    .journal-count{color:var(--muted);font-size:22px}
+    .journal-row{display:grid;gap:14px;margin:12px 0 18px}
+    .panel-soft{
+      background: rgba(12,18,24,.58);        /* see-through */
+      border: 1px solid rgba(15,26,34,.75);
+      border-radius: 14px;                   /* rounded */
+      box-shadow: none;
+      padding: 14px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .journal-search{
+      width:100%;padding:10px 12px;font:18px/1.6 'VT323',monospace;
+      color:var(--ink);background:rgba(22,34,43,.55);
+      border:1px solid rgba(38,53,64,.85);border-radius:12px;outline:none;
+    }
+    .journal-search::placeholder{color:#c7d3db}
+    .status{color:var(--muted);padding-left:2px}
 
-  <header class="site-header journal-headerbar">
+    /* tag buttons (chips) */
+    .chipbar{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 12px;border-radius:999px;cursor:pointer;
+      text-decoration:none;font:18px/1 'VT323',monospace;
+      color:var(--ink);background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.22);
+      transition:transform .08s ease,background .12s ease,border-color .12s ease,opacity .12s ease;
+      user-select:none;
+    }
+    .chip:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.32);transform:translateY(-1px)}
+    .chip.active{background:rgba(240,181,103,.18);border-color:rgba(240,181,103,.55);box-shadow:0 0 0 2px rgba(240,181,103,.15) inset}
+    .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);filter:saturate(1.05)}
+
+    /* grid + cards */
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:6px}
+    @media (min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+    .card{
+      background:rgba(12,18,24,.58);
+      border:1px solid rgba(15,26,34,.78);
+      border-radius:14px;padding:16px 16px 14px;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .card:hover{transform:translateY(-2px);background:rgba(12,18,24,.66);border-color:rgba(15,26,34,.95)}
+    .post-title{color:var(--teal);text-decoration:none;font-weight:700}
+    .post-title:hover{color:#9fe2dc}
+    .post-meta{color:#d7e2ea;margin-top:4px}
+    .post-summary{color:#eaf1f4;margin:8px 0 0}
+
+    /* tiny tag pills inside cards (match your ask: rounded + see-through) */
+    .pills{margin-top:10px}
+    .pill{
+      display:inline-block;margin:6px 6px 0 0;padding:3px 10px;border-radius:999px;
+      color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);font-size:16px
+    }
+
+    /* header bar (journal-only) */
+    .journal-head{position:sticky;top:0;z-index:2;background:rgba(12,18,24,.7);backdrop-filter:blur(8px);border-bottom:1px solid rgba(15,26,34,.9)}
+    .journal-head .nav a{color:#ffd394} .journal-head .nav a:hover{color:#fff1d9}
+  </style>
+</head>
+<body>
+  <!-- Background video (file at /assets/background_2.mp4) -->
+  <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/background_2_poster.jpg">
+    <source src="assets/background_2.mp4" type="video/mp4"/>
+  </video>
+
+  <header class="site-head journal-head">
+    <div class="brand"> </div>
     <nav class="nav">
-      <a href="index.html" class="nav-link">← Home</a>
+      <a href="index.html">← Home</a>
     </nav>
   </header>
 
@@ -35,94 +91,136 @@
       <span id="count" class="journal-count"></span>
     </div>
 
-    <div class="journal-controls glass">
-      <input id="search" type="search" class="journal-search" placeholder="Search title, tags, or summary…" />
-      <span id="status" class="journal-status">Loading posts…</span>
+    <!-- search + status -->
+    <div class="journal-row panel-soft">
+      <input id="search" class="journal-search" type="search" placeholder="Search title, tags, or summary…"/>
+      <div class="status" id="status">Loading posts…</div>
     </div>
 
-    <section id="posts" class="journal-grid" aria-live="polite"></section>
+    <!-- tag chips -->
+    <div id="chipbar" class="chipbar" style="margin-bottom:10px;"></div>
+
+    <!-- cards -->
+    <section id="posts" class="grid" aria-live="polite"></section>
   </main>
 
   <script>
-    const postsEl  = document.getElementById('posts');
-    const countEl  = document.getElementById('count');
+    const postsEl = document.getElementById('posts');
+    const countEl = document.getElementById('count');
     const statusEl = document.getElementById('status');
     const searchEl = document.getElementById('search');
-    let ALL = [];
+    const chipbar = document.getElementById('chipbar');
 
-    const CANDIDATES = ['data/journal.json', '/data/journal.json'];
+    let ALL = [];          // all posts
+    let ACTIVE_TAGS = new Set();  // selected filters
+
+    const CANDIDATES = ['data/journal.json','/data/journal.json'];
 
     (async function load(){
-      for (const url of CANDIDATES) {
-        try {
-          const r = await fetch(url, {cache:'no-store'});
-          if (!r.ok) continue;
+      for (const url of CANDIDATES){
+        try{
+          const r = await fetch(url,{cache:'no-store'});
+          if(!r.ok) continue;
           const data = await r.json();
-          if (Array.isArray(data)) {
-            ALL = data.filter(x => x && typeof x === 'object')
+          if(Array.isArray(data)){
+            ALL = data.filter(x=>x&&typeof x==='object')
                       .sort((a,b)=> new Date(b.date||0) - new Date(a.date||0));
             statusEl.textContent = '';
+            buildChips(ALL);
             render(ALL);
-            hookSearch();
-            return;
+            break;
           }
-        } catch(e) {}
+        }catch(e){}
       }
-      statusEl.textContent = "Couldn't load data/journal.json — showing a demo post.";
-      ALL = [{
-        title: "Demo post — setup complete",
-        date: new Date().toISOString().slice(0,10),
-        summary: "Your journal is wired. Add posts in data/journal.json.",
-        tags: ["setup","journal"],
-        url: "index.html"
-      }];
-      render(ALL);
-      hookSearch();
+      if(!ALL.length){
+        statusEl.textContent = "Couldn't load data/journal.json — showing a demo post.";
+        ALL = [{
+          title:"event name",
+          date:new Date().toISOString().slice(0,10),
+          summary:"What worked for turnout and what I’d change next time.",
+          tags:["HAVK","events"],
+          url:"#"
+        }];
+        buildChips(ALL); render(ALL);
+      }
     })();
+
+    // Build tag filter buttons
+    function buildChips(list){
+      const tagCounts = {};
+      list.forEach(p => (Array.isArray(p.tags)?p.tags:[]).forEach(t => tagCounts[t]=(tagCounts[t]||0)+1));
+      const tags = Object.keys(tagCounts).sort((a,b)=>a.localeCompare(b));
+      chipbar.innerHTML = '';
+      if(!tags.length) return;
+
+      // “All” button
+      chipbar.appendChild(makeChip('All', () => {
+        ACTIVE_TAGS.clear();
+        Array.from(chipbar.querySelectorAll('.chip')).forEach(c=>c.classList.remove('active'));
+        render(filtered());
+      }, true));
+
+      tags.forEach(t=>{
+        const chip = makeChip(`${t} · ${tagCounts[t]}`, () => {
+          chip.classList.toggle('active');
+          if (chip.classList.contains('active')) ACTIVE_TAGS.add(t); else ACTIVE_TAGS.delete(t);
+          render(filtered());
+        });
+        chipbar.appendChild(chip);
+      });
+    }
+
+    function makeChip(label, onClick, isAll=false){
+      const el = document.createElement('button');
+      el.type='button';
+      el.className='chip';
+      el.innerHTML = isAll ? `<span class="dot" style="background:var(--teal)"></span>${label}` : `<span class="dot"></span>${label}`;
+      el.addEventListener('click', onClick);
+      return el;
+    }
+
+    // Search wiring
+    searchEl.addEventListener('input', () => render(filtered()));
+
+    function filtered(){
+      const q = searchEl.value.trim().toLowerCase();
+      let list = ALL;
+      if (ACTIVE_TAGS.size){
+        list = list.filter(p => (p.tags||[]).some(t => ACTIVE_TAGS.has(t)));
+      }
+      if (q){
+        list = list.filter(p => [
+          p.title||'', p.summary||'', ...(Array.isArray(p.tags)?p.tags:[])
+        ].join(' ').toLowerCase().includes(q));
+      }
+      return list;
+    }
 
     function render(list){
       postsEl.innerHTML = '';
       countEl.textContent = `(${list.length})`;
-      if (!list.length){ statusEl.textContent = 'No posts yet.'; return; }
-      list.forEach(p => {
-        const title = safe(p.title) || 'Untitled';
-        const date  = p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
-        const sum   = safe(p.summary || '');
-        const url   = p.url || '#';
-        const tags  = Array.isArray(p.tags) ? p.tags : [];
+      if(!list.length){ statusEl.textContent = 'No matching posts.'; return; }
+      statusEl.textContent = '';
+      list.forEach(p=>{
         const card = document.createElement('article');
-        card.className = 'journal-card glass';
+        card.className = 'card';
         card.innerHTML = `
-          <a class="post-title" href="${url}">${title}</a>
-          <div class="post-meta">${date}</div>
-          ${sum ? `<p class="post-summary">${sum}</p>` : ``}
-          ${tags.length ? `<div class="post-tags">${tags.map(t => `<span class="pill">${safe(t)}</span>`).join('')}</div>` : ``}
+          <a class="post-title" href="${p.url || '#'}">${safe(p.title) || 'Untitled'}</a>
+          <div class="post-meta">${p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : ''}</div>
+          ${p.summary ? `<p class="post-summary">${safe(p.summary)}</p>` : ``}
+          ${(Array.isArray(p.tags)&&p.tags.length) ? `<div class="pills">${p.tags.map(t=>`<span class="pill">${safe(t)}</span>`).join('')}</div>` : ``}
         `;
         postsEl.appendChild(card);
       });
     }
 
-    function hookSearch(){
-      searchEl.addEventListener('input', e => {
-        const q = e.target.value.trim().toLowerCase();
-        if (!q) return render(ALL);
-        const f = ALL.filter(p => [
-          p.title||'',
-          p.summary||'',
-          ...(Array.isArray(p.tags) ? p.tags : [])
-        ].join(' ').toLowerCase().includes(q));
-        render(f);
-      });
-    }
+    function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-    function safe(s){
-      return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
-
-    // Accessibility: respect reduced motion
-    const vid = document.getElementById('bgvid');
+    // Respect reduced motion
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (prefersReduced.matches && vid) { vid.removeAttribute('autoplay'); vid.pause?.(); }
+    if (prefersReduced.matches) {
+      const vid = document.querySelector('.bg-video'); vid && vid.pause && vid.pause();
+    }
   </script>
 </body>
 </html>
