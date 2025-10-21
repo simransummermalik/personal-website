@@ -23,13 +23,13 @@
     ]
   },
   {
-    "title:": "I got featured in the CCI student newsletter!!!!",
+    "title": "Featured in student newsletter!!!!",
     "date":"2025-10-21",
     "tags":["School","Social"],
-    "summary":"I got featured as student spotlight",
+    "summary":"I got featured as student spotlight!!!!!!!!!!!",
     "body": "<p>Longer reflection is currently in the works!.</p>",
     "media":[
-      
+      { "type": "image", "src": "assets/feature.png", "alt": "YAY" }
     ]
   }
 ]
