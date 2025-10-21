@@ -6,6 +6,114 @@
   <title>Summer — Journal</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    /* --- Fireflies: journal-only overrides / UI --- */
+/* Fireflies should float above cards/header, but below the overlay (9999) */
+#fireflies{
+  position: fixed;
+  inset: 0;
+  z-index: 9000;        /* was 0 → too low */
+  pointer-events: none; /* container ignores clicks... */
+}
+
+/* ...but each firefly can be clicked */
+.firefly{
+  pointer-events: auto !important;
+  z-index: 9001;        /* ensure it's above anything in main */
+  position: absolute;   /* you already use absolute with animation */
+}
+
+/* bigger invisible hit area so 6px dots are easy to tap */
+.firefly::after{
+  content: "";
+  position: absolute;
+  inset: -10px;         /* expands clickable area by 10px on all sides */
+}
+
+
+/* ==== Firefly note popover (refined) ==== */
+.ff-pop{
+  position: fixed; z-index: 10000;
+  max-width: 360px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  color: var(--ink);
+  background: rgba(12,18,24,.84);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.45),
+    0 0 0 2px rgba(240,181,103,.08) inset; /* soft amber halo */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font: 17px/1.35 'VT323', monospace;
+  letter-spacing: .2px;
+  transform-origin: 12px 0;
+  opacity: 0; transform: translateY(6px) scale(.98);
+  transition: opacity .15s ease, transform .15s ease;
+}
+.ff-pop[data-show="1"]{ opacity:1; transform: translateY(0) scale(1); }
+
+/* arrow: default = pointing up (popover sits under the firefly) */
+.ff-pop::after{
+  content:""; position:absolute; width:10px; height:10px;
+  background: rgba(12,18,24,.84);
+  border-left: 1px solid rgba(255,255,255,.14);
+  border-top: 1px solid rgba(255,255,255,.14);
+  transform: rotate(45deg);
+  left: 16px; top: -6px;
+  box-shadow: 0 0 0 2px rgba(240,181,103,.06) inset;
+}
+
+/* flip arrow if we place the pop *above* the click point */
+.ff-pop[data-pos="above"]{ transform-origin: 12px 100%; }
+.ff-pop[data-pos="above"]::after{
+  top: auto; bottom: -6px; transform: rotate(225deg);
+}
+
+.ff-pop [data-muted]{
+  display:block; margin-top:6px; color:var(--muted); font-size: 15px; opacity:.9;
+}
+
+
+/* Contact modal */
+.ff-modal {
+  position: fixed; inset: 0; z-index: 10000;
+  display: grid; place-items: center;
+  background: radial-gradient(900px 500px at 20% 0%, rgba(10,10,10,0.25), transparent 60%),
+              rgba(5,8,12,.72);
+  backdrop-filter: blur(6px);
+}
+.ff-modal[hidden] { display: none; }
+
+.ff-sheet {
+  width: min(520px, 92vw);
+  background: rgba(12,18,24,.88);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  color: var(--ink);
+}
+.ff-head {
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.ff-form { padding: 12px; display: grid; gap: 10px; }
+.ff-form label { display: grid; gap: 6px; }
+.ff-form input, .ff-form textarea {
+  width: 100%; padding: 8px 10px; border-radius: 10px;
+  border: 1px solid rgba(38,53,64,.85);
+  background: rgba(22,34,43,.55); color: var(--ink);
+  font: 18px/1.4 'VT323', monospace; outline: none;
+}
+.ff-actions { display:flex; justify-content:flex-end; margin-top: 6px; }
+.ff-btn {
+  border:1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.10);
+  color: var(--ink);
+  border-radius: 10px; padding: 6px 10px;
+  font: 18px 'VT323', monospace; cursor: pointer;
+}
+.ff-btn:hover { background: rgba(255,255,255,.18); }
+
     /* ---- journal-only styles (uses your :root palette) ---- */
     .journal-wrap{max-width:var(--maxw);margin:0 auto;padding:22px}
     .journal-top{display:flex;align-items:baseline;gap:12px;margin:6px 0 12px}
@@ -131,6 +239,40 @@
     .journal-head .nav a{color:#ffd394} .journal-head .nav a:hover{color:#fff1d9}
   </style>
 </head>
+<!-- Fireflies layer (uses your existing #fireflies/.firefly CSS) -->
+<div id="fireflies"></div>
+
+<!-- Firefly note popover -->
+<div id="ff-pop" class="ff-pop" hidden>
+  <div id="ff-pop-body"></div>
+</div>
+
+<!-- Firefly contact modal -->
+<div id="ff-modal" class="ff-modal" hidden aria-modal="true" role="dialog" aria-label="Message Summer">
+  <div class="ff-sheet" role="document">
+    <div class="ff-head">
+      <strong>Send a note</strong>
+      <button type="button" id="ff-close" class="ff-btn">✕</button>
+    </div>
+    <form id="ff-form" class="ff-form">
+      <label>
+        <span>Name</span>
+        <input name="name" required />
+      </label>
+      <label>
+        <span>Email</span>
+        <input name="email" type="email" placeholder="(optional)"/>
+      </label>
+      <label>
+        <span>Message</span>
+        <textarea name="msg" rows="4" required></textarea>
+      </label>
+      <div class="ff-actions">
+        <button class="ff-btn" type="submit">Open email draft</button>
+      </div>
+    </form>
+  </div>
+</div>
 <body>
   <!-- background video -->
   <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/background_2_poster.jpg">
@@ -399,5 +541,169 @@
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (prefersReduced.matches) { const vid=document.querySelector('.bg-video'); vid && vid.pause && vid.pause(); }
   </script>
+  <script>
+/* ===== CLICKABLE FIREFLIES (NOTES + CONTACT FORM) ===== */
+(function setupFireflies() {
+  const layer = document.getElementById('fireflies');
+  const pop = document.getElementById('ff-pop');
+  const popBody = document.getElementById('ff-pop-body');
+  const modal = document.getElementById('ff-modal');
+  const closeBtn = document.getElementById('ff-close');
+  const form = document.getElementById('ff-form');
+
+  if (!layer) return;
+
+  // --- Small, dry notes ---
+  const NOTES = [
+    "firefly 1.",
+    "firefly 2",
+    "3",
+    "4",
+    "5"
+  ];
+
+  const COUNT = 14; // number of fireflies
+  const CONTACT_INDEX = Math.floor(Math.random() * COUNT); // one firefly opens the contact form
+
+  for (let i = 0; i < COUNT; i++) {
+    const f = document.createElement('div');
+    f.className = 'firefly';
+    f.setAttribute('role', 'button');     // accessible
+    f.setAttribute('tabindex', '0');      // focusable
+
+    // randomize motion with your CSS vars
+    const startX = Math.random() * 95 + 'vw';
+    const startY = (Math.random() * 80 + 10) + 'vh';
+    const curveX = (Math.random() * 20 - 10) + 'vw';
+    const scale = (Math.random() * 0.6 + 0.7).toFixed(2);
+    const duration = (Math.random() * 8 + 10).toFixed(1) + 's';
+    const flicker = (Math.random() * 2 + 2).toFixed(1) + 's';
+    const delay = (Math.random() * 8).toFixed(1) + 's';
+
+    f.style.setProperty('--start-x', startX);
+    f.style.setProperty('--start-y', startY);
+    f.style.setProperty('--curve-x', curveX);
+    f.style.setProperty('--ff-scale', scale);
+    f.style.setProperty('--ff-duration', duration);
+    f.style.setProperty('--ff-flicker', flicker);
+    f.style.setProperty('--ff-delay', delay);
+
+    // assign type: note or contact
+    if (i === CONTACT_INDEX) {
+      f.dataset.kind = 'contact';
+      f.title = 'Send a note';
+    } else {
+      f.dataset.kind = 'note';
+      f.dataset.note = NOTES[Math.floor(Math.random() * NOTES.length)];
+      f.title = 'Open note';
+    }
+
+    // --- Click + keyboard events ---
+    f.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rect = f.getBoundingClientRect();
+      if (f.dataset.kind === 'contact') {
+        openModal();
+      } else {
+        openPop(rect.left + rect.width / 2, rect.top);
+      }
+    });
+
+    f.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        f.click();
+      }
+    });
+
+    layer.appendChild(f);
+  }
+
+  // --- Popover logic ---
+ let __popTimer;
+function openPop(x, y){
+  const text = findNearestNote(x, y);
+  popBody.innerHTML = `${escapeHtml(text)}<span data-muted>click any firefly again to cycle</span>`;
+
+  // preferred position: below the click
+  const POP_W = 360, MARGIN = 12;
+  let left = Math.min(window.innerWidth - POP_W - MARGIN, Math.max(MARGIN, x - 24));
+  let top  = y + 14; // below
+
+  // if too close to bottom, flip above
+  const needsAbove = (top + 120 > window.innerHeight - MARGIN); // 120 ~ min height
+  if (needsAbove) { top = Math.max(MARGIN, y - 14 - 90); }      // place above
+
+  pop.style.left = left + 'px';
+  pop.style.top  = top  + 'px';
+  pop.setAttribute('data-pos', needsAbove ? 'above' : 'below');
+  pop.hidden = false;
+
+  // animate in
+  requestAnimationFrame(()=> pop.setAttribute('data-show','1'));
+
+  // auto-dismiss after 3.2s unless hovered
+  clearTimeout(__popTimer);
+  __popTimer = setTimeout(()=> closePop(), 3200);
+  pop.addEventListener('mouseenter', () => clearTimeout(__popTimer), { once:true });
+}
+
+function closePop(){
+  if (pop.hidden) return;
+  pop.removeAttribute('data-show');
+  setTimeout(()=> { pop.hidden = true; }, 140); // match CSS transition
+}
+
+
+  function findNearestNote() {
+    return NOTES[Math.floor(Math.random() * NOTES.length)];
+  }
+
+  // --- Contact modal ---
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  // --- Form submit → opens email draft ---
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const msg = form.msg.value.trim();
+    const subject = encodeURIComponent(`Message from ${name || 'a visitor'}`);
+    const body = encodeURIComponent(`${msg}\n\n— ${name || 'anonymous'}${email ? ` (${email})` : ''}`);
+    window.location.href = `mailto:simran.summer.malik@gmail.com?subject=${subject}&body=${body}`;
+    closeModal();
+  });
+
+  // --- UI close events ---
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeModal(); closePop(); }
+  });
+  document.addEventListener('click', (e) => {
+    if (!pop.hidden && !pop.contains(e.target)) closePop();
+  });
+
+  // --- Helper: escape HTML ---
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[c]));
+  }
+})();
+</script>
+
 </body>
 </html>
