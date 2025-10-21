@@ -6,7 +6,7 @@
   <title>Summer — Journal</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* ---- journal-only styles (keeps your global css intact) ---- */
+    /* ---- journal-only styles (uses your :root palette) ---- */
     .journal-wrap{max-width:var(--maxw);margin:0 auto;padding:22px}
     .journal-top{display:flex;align-items:baseline;gap:12px;margin:6px 0 12px}
     .journal-title{font-size:56px;line-height:1.1;margin:0}
@@ -26,6 +26,7 @@
       color:var(--ink);background:rgba(22,34,43,.55);
       border:1px solid rgba(38,53,64,.85);border-radius:12px;outline:none;
     }
+    .journal-search::placeholder{color:#c7d3db}
     .status{color:var(--muted);padding-left:2px;margin-top:6px}
 
     .chipbar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -59,28 +60,29 @@
       color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);font-size:16px
     }
 
-    /* ---- fullscreen overlay modal ---- */
+    /* ---- fullscreen overlay ---- */
     .overlay{
-      position:fixed; inset:0; z-index:9999;
-      display:none;
+      position:fixed; inset:0; z-index:9999; display:none;
       background: radial-gradient(1200px 600px at 20% 0%, rgba(10,10,10,0.25), transparent 60%),
                   rgba(5,8,12,.75);
       backdrop-filter: blur(8px);
     }
-    .overlay.show{display:block}
+    .overlay.show{ display:block }
+
     .sheet{
-      position:absolute; inset:auto; left:50%; top:50%;
-      transform:translate(-50%,-50%);
-      width:min(1100px, 92vw);
-      max-height:86vh; overflow:hidden;
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:min(1100px, 94vw);
+      height:min(92vh, 1100px);
+      display:grid; grid-template-rows:auto 1fr;  /* head + scrollable body */
+      overflow:hidden;
       background:rgba(12,18,24,.78);
       border:1px solid rgba(255,255,255,.18);
-      border-radius:16px;
-      box-shadow:0 20px 60px rgba(0,0,0,.45);
-      color:var(--ink);
-      display:grid; grid-template-columns: 1fr;
+      border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.45); color:var(--ink);
     }
-    .sheet-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 6px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
+    .sheet-head{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 14px 8px 16px; border-bottom:1px solid rgba(255,255,255,.12)
+    }
     .sheet-title{font-size:30px;margin:0}
     .sheet-date{color:#cfe0ea}
     .close{
@@ -88,41 +90,54 @@
       color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;font:18px 'VT323',monospace;
     }
     .close:hover{background:rgba(255,255,255,.14)}
-    .sheet-body{display:grid; grid-template-columns:1fr; gap:12px; padding:12px; overflow:auto}
+    .sheet-body{
+      overflow:auto;
+      padding:12px; display:grid; grid-template-columns:1fr; gap:12px;
+    }
     @media (min-width:920px){ .sheet-body{ grid-template-columns: 60% 40%; } }
 
-    /* gallery */
+    /* ---- gallery ---- */
     .gallery{
-      position:relative; border-radius:12px; overflow:hidden;
-      background:#0b1218; border:1px solid rgba(255,255,255,.12); min-height:320px;
+      position:relative;
+      height: clamp(260px, 58vh, 720px);
+      border-radius:12px; overflow:hidden;
+      background:#0b1218; border:1px solid rgba(255,255,255,.12);
       display:flex; align-items:center; justify-content:center;
     }
-    .gitem{position:absolute; inset:0; display:none; align-items:center; justify-content:center}
-    .gitem.show{display:flex}
-    .gitem img, .gitem video{max-width:100%; max-height:100%; object-fit:contain}
+    #gwrap{ position:relative; z-index:1; width:100%; height:100%; }
+    .gitem{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:1; }
+    .gitem.show{ display:flex }
+    .gitem img, .gitem video{ width:100%; height:100%; object-fit:contain }
+
     .gprev,.gnext{
       position:absolute; top:50%; transform:translateY(-50%);
-      border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.08);
-      color:var(--ink); border-radius:10px; padding:6px 10px; cursor:pointer;
+      z-index:3; pointer-events:auto;
+      border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.10);
+      color:var(--ink); border-radius:12px; padding:10px 14px; cursor:pointer;
       font:18px 'VT323',monospace;
     }
-    .gprev{left:10px} .gnext{right:10px}
-    .gprev:hover,.gnext:hover{background:rgba(255,255,255,.14)}
-    .dots{position:absolute; bottom:8px; left:0; right:0; display:flex; justify-content:center; gap:6px}
-    .dot{width:8px;height:8px;border-radius:50%; background:rgba(255,255,255,.35)}
-    .dot.active{background:var(--amber)}
+    .gprev{ left:10px } .gnext{ right:10px }
+    .gprev:hover,.gnext:hover{ background:rgba(255,255,255,.18) }
 
-    .sheet-copy{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(255,255,255,.06)}
-    .sheet-tags{margin-top:8px}
+    .dots{ position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px; z-index:2 }
+    .dot{ width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.35) }
+    .dot.active{ background:var(--amber) }
+
+    .sheet-copy{ border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(255,255,255,.06) }
+    .sheet-copy p{ margin:0 0 10px }
+
+    /* sticky header look for journal page */
+    .journal-head{position:sticky;top:0;z-index:2;background:rgba(12,18,24,.7);backdrop-filter:blur(8px);border-bottom:1px solid rgba(15,26,34,.9)}
+    .journal-head .nav a{color:#ffd394} .journal-head .nav a:hover{color:#fff1d9}
   </style>
 </head>
 <body>
-  <!-- Background video -->
+  <!-- background video -->
   <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/background_2_poster.jpg">
     <source src="assets/background_2.mp4" type="video/mp4"/>
   </video>
 
-  <header class="site-head" style="background:rgba(12,18,24,.7);backdrop-filter:blur(8px)">
+  <header class="site-head journal-head">
     <div class="brand"> </div>
     <nav class="nav">
       <a href="index.html">← Home</a>
@@ -144,7 +159,7 @@
     <section id="posts" class="grid" aria-live="polite"></section>
   </main>
 
-  <!-- Fullscreen overlay -->
+  <!-- fullscreen overlay -->
   <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Journal post">
     <div class="sheet" role="document">
       <div class="sheet-head">
@@ -165,7 +180,7 @@
 
         <div class="sheet-copy">
           <div id="ov-body" class="post-summary"></div>
-          <div id="ov-tags" class="sheet-tags"></div>
+          <div id="ov-tags" class="pills"></div>
         </div>
       </div>
     </div>
@@ -176,18 +191,18 @@
     const countEl = document.getElementById('count');
     const statusEl = document.getElementById('status');
     const searchEl = document.getElementById('search');
-    const chipbar = document.getElementById('chipbar');
+    const chipbar  = document.getElementById('chipbar');
 
-    const overlay = document.getElementById('overlay');
-    const ovTitle = document.getElementById('ov-title');
-    const ovDate  = document.getElementById('ov-date');
-    const ovBody  = document.getElementById('ov-body');
-    const ovTags  = document.getElementById('ov-tags');
-    const ovClose = document.getElementById('ov-close');
-    const gwrap   = document.getElementById('gwrap');
-    const gdots   = document.getElementById('gdots');
-    const gprev   = document.getElementById('gprev');
-    const gnext   = document.getElementById('gnext');
+    const overlay  = document.getElementById('overlay');
+    const ovTitle  = document.getElementById('ov-title');
+    const ovDate   = document.getElementById('ov-date');
+    const ovBody   = document.getElementById('ov-body');
+    const ovTags   = document.getElementById('ov-tags');
+    const ovClose  = document.getElementById('ov-close');
+    const gwrap    = document.getElementById('gwrap');
+    const gdots    = document.getElementById('gdots');
+    const gprev    = document.getElementById('gprev');
+    const gnext    = document.getElementById('gnext');
 
     let ALL = [];
     let ACTIVE_TAGS = new Set();
@@ -213,20 +228,17 @@
       }
       statusEl.textContent = "Couldn't load data/journal.json — showing a demo post.";
       ALL = [{
-        title:"event name",
+        title:"Demo Post",
         date:new Date().toISOString().slice(0,10),
-        summary:"What worked for turnout and what I’d change next time.",
-        body:"Longer reflection goes here. Add <b>HTML</b> if you want.",
-        tags:["HAVK","events"],
-        media:[
-          {"type":"image","src":"assets/sample1.jpg","alt":"crowd"},
-          {"type":"image","src":"assets/sample2.jpg","alt":"stage"}
-        ]
+        summary:"Your journal is wired. Add posts in data/journal.json.",
+        body:"<p>Longer text goes here.</p>",
+        tags:["setup","journal"],
+        media:[]
       }];
       buildChips(ALL); render(ALL);
     })();
 
-    // Build tag chips
+    /* ---------- chips ---------- */
     function buildChips(list){
       const tagCounts = {};
       list.forEach(p => (Array.isArray(p.tags)?p.tags:[]).forEach(t => tagCounts[t]=(tagCounts[t]||0)+1));
@@ -257,7 +269,7 @@
       return el;
     }
 
-    // Search
+    /* ---------- search/filter ---------- */
     searchEl.addEventListener('input', () => render(filtered()));
     function filtered(){
       const q = searchEl.value.trim().toLowerCase();
@@ -273,12 +285,12 @@
       return list;
     }
 
-    // Cards
+    /* ---------- cards ---------- */
     function render(list){
       postsEl.innerHTML = '';
       countEl.textContent = `(${list.length})`;
       statusEl.textContent = list.length ? '' : 'No matching posts.';
-      list.forEach((p, idx)=>{
+      list.forEach(p=>{
         const card = document.createElement('article');
         card.className = 'card';
         card.setAttribute('role','button');
@@ -295,15 +307,16 @@
       });
     }
 
-    // Overlay open/close
+    /* ---------- overlay ---------- */
     function openOverlay(p){
       ovTitle.textContent = p.title || 'Untitled';
       ovDate.textContent  = p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
       ovBody.innerHTML    = (p.body ? p.body : (p.summary||'')).toString();
       ovTags.innerHTML    = (Array.isArray(p.tags)&&p.tags.length) ? p.tags.map(t=>`<span class="pill">${safe(t)}</span>`).join('') : '';
 
-      // build gallery
       buildGallery(p.media || []);
+      sizeGallery();
+
       overlay.classList.add('show');
       document.body.style.overflow='hidden';
     }
@@ -311,52 +324,78 @@
       overlay.classList.remove('show');
       document.body.style.overflow='';
       gwrap.innerHTML=''; gdots.innerHTML='';
+      if (window.__ovKeyHandler) { window.removeEventListener('keydown', window.__ovKeyHandler); window.__ovKeyHandler = null; }
     }
     overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeOverlay(); });
     ovClose.addEventListener('click', closeOverlay);
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeOverlay(); });
 
-    // Gallery
+    /* ---------- gallery ---------- */
     function buildGallery(media){
       gwrap.innerHTML=''; gdots.innerHTML=''; galleryIndex=0;
+
       if(!media.length){
         const empty = document.createElement('div');
         empty.className='gitem show'; empty.textContent='No media';
-        gwrap.appendChild(empty); return;
+        gwrap.appendChild(empty);
+        gprev.onclick = gnext.onclick = null;
+        return;
       }
+
       media.forEach((m,i)=>{
-        const it = document.createElement('div'); it.className='gitem' + (i===0?' show':'');
-        if(m.type==='video'){
-          const v=document.createElement('video'); v.src=m.src; v.controls=true; v.playsInline=true; v.style.maxHeight='100%';
+        const it = document.createElement('div');
+        it.className = 'gitem' + (i===0?' show':'');
+        if(m.type === 'video'){
+          const v = document.createElement('video');
+          v.src = m.src; v.controls = true; v.playsInline = true;
+          v.style.maxHeight = '100%';
           it.appendChild(v);
-        }else{
-          const img=document.createElement('img'); img.src=m.src; img.alt=m.alt||'';
+        } else {
+          const img = document.createElement('img');
+          img.src = m.src; img.alt = m.alt || '';
           it.appendChild(img);
         }
         gwrap.appendChild(it);
 
-        const d=document.createElement('div'); d.className='dot'+(i===0?' active':'');
-        d.addEventListener('click',()=>show(i)); gdots.appendChild(d);
+        const d = document.createElement('div');
+        d.className = 'dot' + (i===0?' active':'');
+        d.addEventListener('click', (e)=>{ e.stopPropagation(); show(i); });
+        gdots.appendChild(d);
       });
-      gprev.onclick=()=>show((galleryIndex-1+media.length)%media.length);
-      gnext.onclick=()=>show((galleryIndex+1)%media.length);
-      window.addEventListener('keydown', galleryKey);
-      function galleryKey(e){
-        if(!overlay.classList.contains('show')){ window.removeEventListener('keydown', galleryKey); return; }
-        if(e.key==='ArrowLeft') gprev.click();
-        if(e.key==='ArrowRight') gnext.click();
-      }
+
+      gprev.onclick = (e)=>{ e.stopPropagation(); show((galleryIndex - 1 + media.length) % media.length); };
+      gnext.onclick = (e)=>{ e.stopPropagation(); show((galleryIndex + 1) % media.length); };
+
+      if (window.__ovKeyHandler) window.removeEventListener('keydown', window.__ovKeyHandler);
+      window.__ovKeyHandler = (e)=>{
+        if(!overlay.classList.contains('show')) return;
+        if(e.key === 'ArrowLeft')  gprev.click();
+        if(e.key === 'ArrowRight') gnext.click();
+      };
+      window.addEventListener('keydown', window.__ovKeyHandler);
+
       function show(i){
-        const items=[...gwrap.children], dots=[...gdots.children];
-        items.forEach(el=>el.classList.remove('show'));
-        dots.forEach(el=>el.classList.remove('active'));
-        items[i].classList.add('show'); dots[i].classList.add('active'); galleryIndex=i;
+        const items = [...gwrap.children];
+        const dots  = [...gdots.children];
+        items.forEach(el => el.classList.remove('show'));
+        dots.forEach(el  => el.classList.remove('active'));
+        items[i].classList.add('show');
+        dots[i].classList.add('active');
+        galleryIndex = i;
       }
     }
 
+    /* keep gallery height responsive */
+    function sizeGallery(){
+      const maxH = Math.min(window.innerHeight * 0.62, 720);
+      const g = document.querySelector('.gallery');
+      if (g) g.style.height = Math.max(260, Math.floor(maxH)) + 'px';
+    }
+    window.addEventListener('resize', sizeGallery);
+
     function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-    // Respect reduced motion
+    /* respect reduced motion */
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (prefersReduced.matches) { const vid=document.querySelector('.bg-video'); vid && vid.pause && vid.pause(); }
   </script>

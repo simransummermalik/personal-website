@@ -21,5 +21,15 @@
       { "type": "image", "src": "assets/turnout.jpg", "alt": "turnout" },
       { "type": "image", "src": "assets/flyer.jpg", "alt": "flyer" }
     ]
+  },
+  {
+    "title:": "I got featured in the CCI student newsletter!!!!",
+    "date":"2025-10-21",
+    "tags":["School","Social"],
+    "summary":"I got featured as student spotlight",
+    "body": "<p>Longer reflection is currently in the works!.</p>",
+    "media":[
+      
+    ]
   }
 ]
