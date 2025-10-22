@@ -6,28 +6,11 @@
   <title>Quantum — Meeting Notes & Code</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* ===== Page-scoped styles (keeps your globals intact) ===== */
     .wrap{max-width: min(1400px, 96vw); margin:0 auto; padding:22px}
     .top{display:flex; align-items:baseline; gap:14px; margin:6px 0 16px}
     .title{font-size:64px; line-height:1.05; margin:0}
     .count{color:var(--muted); font-size:22px}
 
-    .panel{
-      background: rgba(12,18,24,.58);
-      border: 1px solid rgba(15,26,34,.75);
-      border-radius: 14px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding:14px; margin-bottom:16px;
-    }
-    .search{
-      width:100%; padding:12px 14px; font:20px/1.6 'VT323',monospace;
-      color:var(--ink); background:rgba(22,34,43,.55);
-      border:1px solid rgba(38,53,64,.85); border-radius:12px; outline:none;
-    }
-    .status{color:var(--muted); padding-left:2px; margin-top:8px}
-
-    /* ----- Summary box at top ----- */
     .summary-box {
       background: rgba(12,18,24,.58);
       border: 1px solid rgba(15,26,34,.75);
@@ -97,7 +80,6 @@
     .notes{ font-size:20px; line-height:1.65; white-space:pre-wrap; }
     .notes p{ margin:0 0 10px }
 
-    /* ===== Code blocks ===== */
     .codeblock{
       position:relative; margin:0 0 14px; border:1px solid rgba(255,255,255,.16);
       background:#0b1218; border-radius:12px; overflow:hidden;
@@ -111,16 +93,6 @@
       color:var(--ink); border-radius:8px; padding:4px 8px; cursor:pointer; font:16px 'VT323',monospace }
     .copy:hover{ background:rgba(255,255,255,.18) }
     pre{ margin:0; padding:14px; overflow:auto; font:16px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; color:#eaf1f4; }
-    code{ white-space:pre; }
-
-    /* simple line highlight-ish */
-    pre code .k{ color:#9fe2dc }   /* keywords-ish */
-    pre code .s{ color:#ffd394 }   /* strings-ish */
-    pre code .c{ color:#8fa3b2 }   /* comments-ish */
-
-    /* Sticky site header look to match your theme */
-    .site-head{ position:sticky; top:0; z-index:2; background:rgba(12,18,24,.7); backdrop-filter:blur(8px); border-bottom:1px solid rgba(15,26,34,.9) }
-    .site-head .nav a{ color:#ffd394 } .site-head .nav a:hover{ color:#fff1d9 }
   </style>
 </head>
 <body>
@@ -129,9 +101,7 @@
     <source src="assets/background_3.mp4" type="video/mp4" />
   </video>
 
-  <!-- Header -->
   <header class="site-head">
-    <div class="brand"></div>
     <nav class="nav">
       <a href="index.html">Home</a>
       <a href="journal.html">Journal</a>
@@ -145,44 +115,32 @@
       <span id="count" class="count"></span>
     </div>
 
-    <!-- Search panel -->
-    <div class="panel">
-      <input id="search" class="search" type="search" placeholder="Search titles, org, people, notes, or code…" />
-      <div id="status" class="status">Loading…</div>
-    </div>
-
-    <!-- Summary section at the top -->
     <section id="summary" class="summary-box">
       <h2>Summary</h2>
       <div id="summary-content">Loading summary…</div>
     </section>
 
-    <!-- Cards -->
     <section id="rows" class="grid" aria-live="polite"></section>
   </main>
 
-  <!-- Fullscreen detail -->
-  <div id="ov" class="overlay" role="dialog" aria-modal="true" aria-label="Entry detail">
-    <div class="sheet" role="document">
+  <div id="ov" class="overlay" role="dialog" aria-modal="true">
+    <div class="sheet">
       <div class="head">
         <div>
           <h2 id="ov-title" class="htitle">Title</h2>
           <div id="ov-date" class="hdate"></div>
         </div>
-        <button id="ov-close" class="btn" type="button">✕ Close</button>
+        <button id="ov-close" class="btn">✕ Close</button>
       </div>
-
       <div class="body">
         <div class="section">
           <h4>Summary</h4>
           <div id="ov-summary" class="notes"></div>
         </div>
-
         <div class="section">
           <h4>Meeting Notes</h4>
           <div id="ov-notes" class="notes"></div>
         </div>
-
         <div class="section">
           <h4>Code</h4>
           <div id="ov-code"></div>
@@ -192,141 +150,68 @@
   </div>
 
   <script>
-    const rowsEl = document.getElementById('rows');
-    const countEl = document.getElementById('count');
-    const statusEl = document.getElementById('status');
-    const searchEl = document.getElementById('search');
+    const rowsEl=document.getElementById('rows');
+    const countEl=document.getElementById('count');
+    const ov=document.getElementById('ov');
+    const ovTitle=document.getElementById('ov-title');
+    const ovDate=document.getElementById('ov-date');
+    const ovSummary=document.getElementById('ov-summary');
+    const ovNotes=document.getElementById('ov-notes');
+    const ovCode=document.getElementById('ov-code');
+    const ovClose=document.getElementById('ov-close');
+    let ALL=[];
 
-    const ov = document.getElementById('ov');
-    const ovTitle = document.getElementById('ov-title');
-    const ovDate  = document.getElementById('ov-date');
-    const ovSummary = document.getElementById('ov-summary');
-    const ovNotes   = document.getElementById('ov-notes');
-    const ovCode    = document.getElementById('ov-code');
-    const ovClose   = document.getElementById('ov-close');
-
-    let ALL = [];
-
-    const CANDIDATES = ['data/quantum.json','/data/quantum.json'];
-
-    (async function load(){
-      for (const url of CANDIDATES){
-        try{
-          const r = await fetch(url,{cache:'no-store'});
-          if(!r.ok) continue;
-          const data = await r.json();
-          if(Array.isArray(data)){
-            ALL = data.filter(x=>x && typeof x === 'object')
-                      .sort((a,b)=> new Date(b.date||0) - new Date(a.date||0));
-            statusEl.textContent='';
-            render(ALL);
-            updateSummary(ALL);
-            return;
-          }
-        }catch(e){}
-      }
-      statusEl.textContent = "Couldn't load data/quantum.json";
-      document.getElementById('summary-content').textContent = 'No entries yet.';
+    (async()=>{
+      try{
+        const r=await fetch('data/quantum.json',{cache:'no-store'});
+        const d=await r.json();
+        ALL=d.sort((a,b)=>new Date(b.date)-new Date(a.date));
+        render(ALL);
+        updateSummary(ALL);
+      }catch(e){document.getElementById('summary-content').textContent='No entries yet.';}
     })();
 
-    // Build the top summary (last few entries, auto)
-    function updateSummary(list) {
-      const box = document.getElementById('summary-content');
-      if (!list || !list.length) { box.textContent = 'No entries yet.'; return; }
-
-      const latest = list.slice(0, 3);
-      const items = latest.map(p =>
-        `<p><strong>${safe(p.title)}</strong> — ${safe(p.summary || p.notes || '')}</p>`
-      ).join('');
-
-      const lastDate = list[0].date ? new Date(list[0].date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
-
-      box.innerHTML = `
-        <p>This is where I log meetings and experiments in detail — notes and code included. Below are the most recent:</p>
-        ${items}
-        <p style="margin-top:10px;color:var(--ink)">
-          Total entries: <strong>${list.length}</strong>${lastDate ? ` • Last updated: <strong>${lastDate}</strong>` : '' }
-        </p>
-      `;
-    }
-
-    searchEl.addEventListener('input', ()=> render(filter()));
-
-    function filter(){
-      const q = searchEl.value.trim().toLowerCase();
-      if (!q) return ALL;
-      return ALL.filter(p => [
-        p.title||'', p.summary||'', p.summary_long||'', p.notes||'', p.notes_html||'',
-        (p.org||''), (p.people||[]).join(' '),
-        JSON.stringify(p.code||[])
-      ].join(' ').toLowerCase().includes(q));
+    function updateSummary(list){
+      const box=document.getElementById('summary-content');
+      if(!list.length){box.textContent='No entries yet.';return;}
+      const latest=list.slice(0,3);
+      const text=latest.map(p=>`<p><strong>${safe(p.title)}</strong> — ${safe(p.summary||'')}</p>`).join('');
+      const last=list[0].date?new Date(list[0].date).toLocaleDateString():''; 
+      box.innerHTML=`<p>This is where I record my quantum meetings, notes, and discoveries.</p>${text}<p>Total entries: <strong>${list.length}</strong>${last?` • Last updated ${last}`:''}</p>`;
     }
 
     function render(list){
       rowsEl.innerHTML='';
-      countEl.textContent = `(${list.length})`;
-      statusEl.textContent = list.length ? '' : 'No matching notes.';
+      countEl.textContent=`(${list.length})`;
       list.forEach(p=>{
         const el=document.createElement('article');
-        el.className='card'; el.setAttribute('role','button'); el.setAttribute('tabindex','0');
-        el.innerHTML=`
-          <h3>${safe(p.title)||'Untitled'}</h3>
-          <div class="meta">
-            ${p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : ''}
-            ${p.org ? ` • ${safe(p.org)}`:''}
-            ${p.people && p.people.length ? ` • ${safe(p.people.join(', '))}`:''}
-          </div>
-          <p>${safe(p.summary||'')}</p>
-        `;
-        el.addEventListener('click', ()=> open(p));
-        el.addEventListener('keypress', e=>{ if(e.key==='Enter'||e.key===' ') open(p); });
+        el.className='card';
+        el.innerHTML=`<h3>${safe(p.title)}</h3><div class="meta">${p.date?new Date(p.date).toLocaleDateString():''}</div><p>${safe(p.summary||'')}</p>`;
+        el.addEventListener('click',()=>open(p));
         rowsEl.appendChild(el);
       });
     }
 
     function open(p){
-      ovTitle.textContent = p.title || 'Untitled';
-      ovDate.textContent  = p.date ? new Date(p.date).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : '';
-
-      // Summary block (HTML or text)
-      ovSummary.innerHTML = p.summary_long ? p.summary_long : safe(p.summary||'');
-
-      // Notes block (HTML or text)
-      if (p.notes_html) {
-        ovNotes.innerHTML = p.notes_html;
-      } else {
-        ovNotes.textContent = p.notes || '';
-      }
-
-      // Code blocks
-      ovCode.innerHTML = '';
-      (p.code || []).forEach(sn => {
-        const wrap = document.createElement('div'); wrap.className='codeblock';
-        wrap.innerHTML = `
-          <div class="codehead">
-            <span>${safe(sn.label || sn.lang || 'code')}</span>
-            <button class="copy" type="button">Copy</button>
-          </div>
-          <pre><code>${safe(sn.content || '')}</code></pre>
-        `;
-        const btn = wrap.querySelector('.copy');
-        btn.addEventListener('click', ()=>{
-          navigator.clipboard.writeText(sn.content || '').then(()=>{
-            btn.textContent = 'Copied!';
-            setTimeout(()=> btn.textContent='Copy', 1000);
-          });
+      ovTitle.textContent=p.title;
+      ovDate.textContent=p.date?new Date(p.date).toLocaleDateString():''; 
+      ovSummary.innerHTML=p.summary_long||safe(p.summary||'');
+      ovNotes.textContent=p.notes||'';
+      ovCode.innerHTML='';
+      (p.code||[]).forEach(sn=>{
+        const div=document.createElement('div');div.className='codeblock';
+        div.innerHTML=`<div class="codehead"><span>${safe(sn.label||'code')}</span><button class="copy">Copy</button></div><pre><code>${safe(sn.content||'')}</code></pre>`;
+        div.querySelector('.copy').addEventListener('click',()=>{
+          navigator.clipboard.writeText(sn.content||'');
         });
-        ovCode.appendChild(wrap);
+        ovCode.appendChild(div);
       });
-
-      ov.classList.add('show'); document.body.style.overflow='hidden';
+      ov.classList.add('show');document.body.style.overflow='hidden';
     }
-
-    function close(){ ov.classList.remove('show'); document.body.style.overflow=''; }
-    ov.addEventListener('click', e=>{ if(e.target===ov) close(); });
-    ovClose.addEventListener('click', close);
-    window.addEventListener('keydown', e=>{ if(e.key==='Escape') close(); });
-
+    function close(){ov.classList.remove('show');document.body.style.overflow='';}
+    ov.addEventListener('click',e=>{if(e.target===ov)close();});
+    ovClose.addEventListener('click',close);
+    window.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
     function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   </script>
 </body>

@@ -1,0 +1,58 @@
+[
+  {
+    "title": "CAIR Quantum Group Kickoff",
+    "date": "2025-09-14",
+    "summary": "First team meeting — discussed goals for the semester and potential demo ideas for the hybrid QML Torch toolkit.",
+    "summary_long": "<p>We kicked off the semester’s Quantum Machine Learning division under CAIR. The focus was to define milestones for <strong>QML Torch</strong> — our open-source hybrid quantum-classical ML framework. We decided to start with a small XOR dataset demo to test PennyLane + PyTorch interoperability.</p><p>I volunteered to manage the first prototype notebook and get everyone set up with the repo and conda environment. We also discussed potential outreach ideas for HAVK workshops using quantum visualizations.</p>",
+    "notes": "Next steps: set up team repo branches, prepare quantum XOR example, finalize architecture diagram.\nFocus: Show difference between classical vs variational circuits.\nDeadline: Week 2 of September.",
+    "code": [
+      {
+        "label": "XOR Quantum Circuit",
+        "lang": "python",
+        "content": "import pennylane as qml\nfrom pennylane import numpy as np\n\n@qml.qnode(qml.device('default.qubit', wires=2))\ndef circuit(x1, x2, weights):\n    qml.RX(x1, wires=0)\n    qml.RX(x2, wires=1)\n    qml.CNOT(wires=[0, 1])\n    qml.RY(weights[0], wires=1)\n    return qml.expval(qml.PauliZ(1))"
+      }
+    ]
+  },
+  {
+    "title": "QML Torch Feature Map Testing",
+    "date": "2025-09-28",
+    "summary": "Tested several quantum feature maps for encoding classical data — noted which circuits captured non-linear boundaries best.",
+    "summary_long": "<p>We experimented with <em>AngleEmbedding</em>, <em>AmplitudeEmbedding</em>, and <em>IQPEmbedding</em> in PennyLane to see which mapped best to our sample moon dataset. The <strong>IQP feature map</strong> produced better separation in Hilbert space.</p><p>I implemented a quick visualization comparing classical kernel SVM vs quantum kernel results. Discussion followed about regularization, data scaling, and hardware simulation constraints.</p>",
+    "notes": "Amplitude embedding needed normalization — caused small numerical errors.\nNext: integrate quantum kernel as a drop-in replacement for sklearn’s SVC kernel.",
+    "code": [
+      {
+        "label": "Feature Map Example",
+        "lang": "python",
+        "content": "from pennylane.templates import AmplitudeEmbedding\n\ndef feature_map(x):\n    AmplitudeEmbedding(x, wires=[0,1], normalize=True)"
+      }
+    ]
+  },
+  {
+    "title": "Meeting with Dr. Vega — Variational Circuits",
+    "date": "2025-10-05",
+    "summary": "Mentorship session on optimizing parameterized quantum circuits and avoiding barren plateaus.",
+    "summary_long": "<p>Dr. Vega explained why <strong>barren plateaus</strong> occur in deeper variational circuits — the gradients vanish exponentially with depth. We reviewed potential fixes like layer-wise training, reinitialization, and problem-specific ansätze.</p><p>I took notes on gradient variance visualization using <code>qml.gradients.param_shift</code> and began implementing a smaller 2-layer test to check stability.</p>",
+    "notes": "Action: Build shallow circuit benchmark.\nReminder: visualize gradient magnitude distribution.\nPotential reading: McClean et al., 'Barren Plateaus in Quantum Neural Network Training Landscapes'.",
+    "code": [
+      {
+        "label": "Gradient Test",
+        "lang": "python",
+        "content": "grad_fn = qml.grad(circuit, argnum=2)\nweights = np.random.randn(2, requires_grad=True)\ngrad = grad_fn(np.pi/4, np.pi/3, weights)\nprint(grad)"
+      }
+    ]
+  },
+  {
+    "title": "QML Torch — Internal Demo",
+    "date": "2025-10-12",
+    "summary": "First internal demo of QML Torch with live gradient flow visualization and partial dataset training.",
+    "summary_long": "<p>We presented our first <strong>QML Torch</strong> demo at the CAIR weekly meeting. It showed live loss curves of a variational circuit learning XOR patterns. The team was surprised how stable convergence was compared to early runs.</p><p>I’m now refactoring the visualization component and adding CLI arguments for backend switching (Qiskit vs PennyLane).</p>",
+    "notes": "Fix: CLI backend switch not passing arguments correctly.\nAdd: optional loss plot flag for better UX.",
+    "code": [
+      {
+        "label": "Training Loop Snippet",
+        "lang": "python",
+        "content": "for epoch in range(epochs):\n    optimizer.step(loss_fn)\n    if epoch % 10 == 0:\n        print(f\"Epoch {epoch}: loss = {loss_fn():.4f}\")"
+      }
+    ]
+  }
+]
