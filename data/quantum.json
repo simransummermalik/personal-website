@@ -12,5 +12,19 @@
       "content": "https://github.com/simransummermalik/qml-torch-activity-one"
     }
   ]
+},
+{
+  "title": "Quantum XOR — Visualizing Entanglement and Nonlinearity",
+  "date": "2025-10-01",
+  "summary": "Conceptual quantum reimagining of the classic XOR problem, inspired by the game XOR — built to show how quantum logic and interference patterns could replicate nonlinearity in ML decision spaces.",
+  "summary_long": "<p>This lab extended the ideas behind <strong>QML Torch Activity One</strong> into a direct visual case study using the XOR dataset as both a classical benchmark and a conceptual testing ground for quantum structure. Inspired by the retro game <a href='https://www.crazygames.com/game/xor' target='_blank'>XOR</a>, this project explored how superposition and entanglement can act as information routing mechanisms, mirroring how nonlinear activations and feature crossings behave in classical deep learning.</p><p>Implemented fully on laptop-based simulators using <code>PennyLane</code> and <code>NumPy</code>, the experiment visualized the quantum circuit’s interference landscape as a differentiable decision surface. The focus was not on outperforming classical models, but on understanding how quantum transformations <em>encode logical nonlinearity without explicit activation functions</em>. The outcome served as both a teaching demo and a conceptual bridge toward hybrid layers that merge quantum data reuploading with PyTorch autograd.</p>",
+  "notes": "Detailed notes and analysis PDF: https://drive.google.com/file/d/1upald5Y7m3GdC2k4gwsqYBcodfCJXAes/view\nAdditional documentation: 10_1 notes - Google Docs (1) (3).pdf",
+  "code": [
+    {
+      "label": "GitHub Repository",
+      "lang": "link",
+      "content": "https://github.com/simransummermalik/quantum-xor"
+    }
+  ]
 }
 ]
