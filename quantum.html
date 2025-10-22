@@ -177,7 +177,11 @@
       const latest=list.slice(0,3);
       const text=latest.map(p=>`<p><strong>${safe(p.title)}</strong> — ${safe(p.summary||'')}</p>`).join('');
       const last=list[0].date?new Date(list[0].date).toLocaleDateString():''; 
-      box.innerHTML=`<p>This is where I record my quantum meetings, notes, and discoveries.</p>${text}<p>Total entries: <strong>${list.length}</strong>${last?` • Last updated ${last}`:''}</p>`;
+      box.innerHTML=`<p>This is where I record my quantum meetings, notes, and discoveries.</p><p>I lead the Quantum Machine Learning division at Charlotte AI Research, where I’m developing QML Torch — a next-generation framework that bridges quantum computation with deep learning. My work sits at the intersection of theory and experimentation: I design and run noise-aware quantum simulation labs entirely on laptops, replicating the statistical behavior of real qubit systems under decoherence and constraint. These experiments are not demonstrations—they’re controlled investigations into how variational quantum circuits, quantum kernels, and feature maps behave within differentiable machine-learning pipelines.
+
+My focus is on building toward the edge of what’s computationally possible. Even if current quantum methods don’t surpass classical ones, I study where and why their inductive biases diverge—how entanglement, circuit depth, and data reuploading interact with gradient flow, expressivity, and optimization stability. Every lab iteration feeds into the theoretical architecture of QML Torch, pushing it closer to a fully hardware-agnostic, research-grade environment capable of scaling to true quantum backends once funding is secured.
+
+I oversee the entire lifecycle—from mathematical design to experimental validation—crafting the curriculum, the frameworks, and the direction of the division itself. My goal isn’t to chase performance headlines, but to build the infrastructure and methodology for quantum machine learning that’s reproducible, interpretable, and scientifically honest. QML Torch is the groundwork for that vision—an evolving system that treats quantum computation not as a spectacle, but as the next logical extension of deep learning itself.<p/>${text}<p>Total entries: <strong>${list.length}</strong>${last?` • Last updated ${last}`:''}</p>`;
     }
 
     function render(list){
