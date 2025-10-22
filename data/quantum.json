@@ -26,5 +26,21 @@
       "content": "https://github.com/simransummermalik/quantum-xor"
     }
   ]
+},
+{
+  "title": "Quantum Key Distribution — BB84 Protocol Experiment",
+  "date": "2025-10-21",
+  "summary": "Experimental implementation of the BB84 quantum key distribution (QKD) protocol using Qiskit, exploring quantum randomness, measurement disturbance, and eavesdrop detection.",
+  "summary_long": "<p>This activity introduced the <strong>BB84 Quantum Key Distribution (QKD)</strong> protocol as both a conceptual and practical demonstration of secure information exchange through quantum mechanics. The experiment used <code>Qiskit</code> within a Google Colab environment to simulate the full BB84 process: random bit generation, polarization basis encoding, and measurement-based decoding between sender (Alice) and receiver (Bob). The session was paired with an interactive presentation designed to make quantum security principles intuitive for new researchers.</p><p>Students implemented the protocol’s logic on a simulated quantum backend (<code>AerSimulator</code>), visualized eavesdropping effects, and examined how measurement disturbance exposes interception attempts. The goal was not cryptographic optimization but <em>physical understanding</em>—showing how the fundamental laws of measurement and superposition provide unbreakable security guarantees. This lab established the foundation for integrating QKD methods with the QML Torch pipeline, emphasizing experiment reproducibility and hands-on intuition for quantum information flow.</p>",
+  "notes": "Presentation: https://docs.google.com/presentation/d/1x09tz3PIPuQphaql1L4NC1NSv8HcCrKqfFxahYClHyI/edit\nColab notebook: https://colab.research.google.com/drive/1i2dr0py-rvj61NzPHdZoCcs2W7eNKzuY?usp=sharing\nDetailed notes: BB84 !!!.pdf",
+  "code": [
+    {
+      "label": "Google Colab Notebook",
+      "lang": "link",
+      "content": "https://colab.research.google.com/drive/1i2dr0py-rvj61NzPHdZoCcs2W7eNKzuY?usp=sharing"
+    }
+  ]
 }
+
+
 ]
