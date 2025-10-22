@@ -1,7 +1,7 @@
 [
 {
   "title": "QML Torch: Conceptual Quantum Layer Experiment",
-  "date": "2025-09-18",
+  "date": "2025-09-25",
   "summary": "Initial experimental lab for QML Torch — explored how quantum superposition and entanglement can conceptually extend classical nonlinear modeling.",
   "summary_long": "<p>This lab marked the first experimental step toward <strong>QML Torch</strong>, focusing on the conceptual interface between classical and quantum representations. The intent was not to optimize performance but to probe structure—to examine how superposition and entanglement can replicate or extend nonlinear transformations found in deep learning. Using <code>PennyLane</code> simulators on a standard laptop, the experiment mapped interference patterns to classical feature space, providing a tangible foundation for later hybrid differentiable circuits integrated with PyTorch autograd. This work defined the architectural language and intuition that will guide future hardware-connected implementations.</p>",
   "notes": "Full lab notes and explanations are available in the project PDF: https://drive.google.com/file/d/1upald5Y7m3GdC2k4gwsqYBcodfCJXAes/view",
