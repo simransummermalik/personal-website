@@ -38,5 +38,5 @@
   "education": [
     { "school": "UNC Charlotte", "degree": "B.S. Computer Science & Biology (Bioinformatics)", "when": "in progress" }
   ],
-  "skills": ["python","java","c/c++","javascript/react","flask","pandas/numpy","pytorch/tensorflow","biopython","linux","docker","git"]
+  "skills": []
 }
