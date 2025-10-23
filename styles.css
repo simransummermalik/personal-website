@@ -80,37 +80,47 @@ h2{font-size:26px; color:var(--teal); margin:0 0 12px}
   h1{font-size:46px}
 }
 /* --- Fireflies --- */
-/* Fireflies: restore original behavior */
 #fireflies {
-  position: fixed;          /* sits on top of all content */
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  pointer-events: none;     /* stops blocking clicks */
-  z-index: -1;              /* put them behind everything */
+  position: fixed;
+  inset: 0;
+  z-index: 0;                 /* video is -1, content panels are above 0 */
+  pointer-events: none;       /* never block clicks */
 }
 
 .firefly {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle, #fff8b0 0%, #ffd700 60%, transparent 100%);
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  opacity: 0.9;
-  animation: fly var(--ff-duration) ease-in-out infinite,
-             flicker var(--ff-flicker) ease-in-out infinite;
-  transform: scale(var(--ff-scale));
+  background: radial-gradient(circle, rgba(255, 223, 128, 0.95) 0%, rgba(255, 223, 128, 0.4) 40%, transparent 70%);
+  box-shadow: 0 0 12px 4px rgba(240, 181, 103, 0.45);
+  opacity: 0;
+  filter: saturate(1.05);
+  /* each gets custom properties from JS */
+  animation:
+    firefly-float var(--ff-duration, 12s) linear infinite,
+    firefly-flicker var(--ff-flicker, 2.6s) ease-in-out infinite;
+  animation-delay: var(--ff-delay, 0s);
+  transform: translate3d(0,0,0);
 }
 
-@keyframes fly {
-  0%   { transform: translate(var(--start-x), var(--start-y)) scale(var(--ff-scale)); }
-  50%  { transform: translate(calc(var(--start-x) + var(--curve-x)), calc(var(--start-y) - 30vh)) scale(var(--ff-scale)); }
-  100% { transform: translate(var(--start-x), var(--start-y)) scale(var(--ff-scale)); }
+/* Vertical float (upwards), with slight curve via translate + skew */
+@keyframes firefly-float {
+  0%   { opacity: 0; transform: translate(var(--start-x), var(--start-y)) scale(var(--ff-scale, 1)); }
+  8%   { opacity: 1; }
+  50%  { transform: translate(calc(var(--start-x) + var(--curve-x)), calc(var(--start-y) - 40vh)) scale(var(--ff-scale, 1)); }
+  100% { opacity: 0; transform: translate(calc(var(--start-x) + var(--curve-x) * 1.6), calc(var(--start-y) - 85vh)) scale(var(--ff-scale, 1)); }
 }
 
-@keyframes flicker {
-  0%, 100% { opacity: 0.8; }
-  50%      { opacity: 0.3; }
+/* Gentle brightness twinkle */
+@keyframes firefly-flicker {
+  0%, 100% { filter: brightness(1) saturate(1.05); }
+  25%      { filter: brightness(1.25) saturate(1.15); }
+  60%      { filter: brightness(0.85) saturate(0.95); }
+}
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+  .firefly { animation: firefly-flicker 4s ease-in-out infinite; }
+  @keyframes firefly-float { 0%,100% { transform: translate(var(--start-x), var(--start-y)); opacity: 1; } }
 }
