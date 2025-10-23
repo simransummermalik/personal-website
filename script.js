@@ -1,11 +1,33 @@
-// Year stamp
-document.getElementById('y').textContent = new Date().getFullYear();
+// === UTIL: move #skills directly under #about (keeps all photos/content) ===
+function moveSkillsUnderAbout() {
+  const aboutSection  = document.getElementById('about');   // <section id="about">
+  const skillsSection = document.getElementById('skills');  // <section id="skills">
+  if (!aboutSection || !skillsSection) return;
 
-// Load data/profile.json if present and render all sections
+  // Only move if it's not already immediately after About
+  if (aboutSection.nextElementSibling !== skillsSection) {
+    aboutSection.insertAdjacentElement('afterend', skillsSection);
+  }
+}
+
+// Run once DOM is ready (works even if JSON hasn’t loaded yet)
+document.addEventListener('DOMContentLoaded', moveSkillsUnderAbout);
+
+// === Year stamp ===
+document.addEventListener('DOMContentLoaded', () => {
+  const y = document.getElementById('y');
+  if (y) y.textContent = new Date().getFullYear();
+});
+
+// === Load data/profile.json if present and render all sections ===
 fetch('data/profile.json')
   .then(r => (r.ok ? r.json() : null))
   .then(data => {
-    if (!data) return;
+    if (!data) {
+      // Still ensure Skills sits under About even without data
+      moveSkillsUnderAbout();
+      return;
+    }
 
     // About
     if (data.about) {
@@ -28,13 +50,6 @@ fetch('data/profile.json')
         if (l) l.href = data.links.linkedin;
       }
     }
-        // Skills
-    if (Array.isArray(data.skills)) {
-      const line = document.getElementById('skillsLine');
-      if (line) line.textContent = data.skills.join(' · ');
-    }
-  })
-  .catch(() => { /* no JSON? fine, fallback content stays */ });
 
     // Projects
     if (Array.isArray(data.projects)) {
@@ -102,7 +117,29 @@ fetch('data/profile.json')
         });
       }
     }
-// --- Fireflies spawner ---
+
+    // Skills (text line — photos remain as-is inside #skills)
+    if (Array.isArray(data.skills)) {
+      const line = document.getElementById('skillsLine');
+      if (line) line.textContent = data.skills.join(' · ');
+    }
+
+    // After JSON-driven renders, ensure #skills sits under #about
+    moveSkillsUnderAbout();
+  })
+  .catch(() => {
+    // If JSON fails, still try to put Skills under About
+    moveSkillsUnderAbout();
+  });
+
+// --- Optional nicety: smooth scroll + target offset for sticky headers ---
+document.addEventListener('DOMContentLoaded', () => {
+  document.documentElement.style.scrollBehavior = 'smooth';
+  // Add this rule in your CSS once:
+  // :target { scroll-margin-top: 80px; }  /* adjust 80px to your header height */
+});
+
+// --- Fireflies spawner (unchanged) ---
 (function makeFireflies() {
   const container = document.getElementById('fireflies');
   if (!container) return;
@@ -118,9 +155,7 @@ fetch('data/profile.json')
     // randomize start position: anywhere across width, near lower 70% height
     const startX = Math.random() * 100;            // vw
     const startY = 40 + Math.random() * 60;        // vh (40–100)
-    // random subtle horizontal curve
     const curveX = (Math.random() * 20 - 10) + 'vw'; // -10vw..10vw
-    // durations & flicker
     const duration = (10 + Math.random() * 10).toFixed(1) + 's'; // 10–20s
     const flicker  = (2.2 + Math.random() * 1.8).toFixed(1) + 's'; // 2.2–4.0s
     const delay    = (-Math.random() * 10).toFixed(1) + 's'; // negative = stagger immediately
