@@ -5,6 +5,14 @@
     "github": "https://github.com/simransummermalik",
     "linkedin": "https://www.linkedin.com/in/summermalik/"
   },
+  "skills_photos": [
+  { "src": "assets/skills/python.png", "alt": "Python", "title": "Python" },
+  { "src": "assets/skills/js.png", "alt": "JavaScript", "title": "JavaScript" },
+  { "src": "assets/skills/react.png", "alt": "React", "title": "React" },
+  { "src": "assets/skills/qiskit.png", "alt": "Qiskit", "title": "Qiskit" },
+  { "src": "assets/skills/pytorch.png", "alt": "PyTorch", "title": "PyTorch" }
+],
+
   "projects": [
     { "title": "GeneCrafter", "description": "DNA → playful traits with short “why it works” notes.", "tags": ["python","flask","biopython"] },
     { "title": "SYN", "description": "Browser sign-language recognition (React + MediaPipe). 1st at UNCC Hackathon.", "tags": ["react","mediapipe","dl"] },

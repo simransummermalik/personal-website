@@ -123,6 +123,22 @@ fetch('data/profile.json')
       const line = document.getElementById('skillsLine');
       if (line) line.textContent = data.skills.join(' · ');
     }
+    // Skill photos gallery
+if (Array.isArray(data.skills_photos)) {
+  const gallery = document.getElementById('skillsPhotos');
+  if (gallery) {
+    gallery.innerHTML = '';
+    data.skills_photos.forEach(photo => {
+      const fig = document.createElement('figure');
+      fig.className = 'skill-photo';
+      fig.innerHTML = `
+        <img src="${photo.src}" alt="${photo.alt || 'Skill'}">
+        ${photo.title ? `<figcaption>${photo.title}</figcaption>` : ''}
+      `;
+      gallery.appendChild(fig);
+    });
+  }
+}
 
     // After JSON-driven renders, ensure #skills sits under #about
     moveSkillsUnderAbout();
@@ -131,7 +147,7 @@ fetch('data/profile.json')
     // If JSON fails, still try to put Skills under About
     moveSkillsUnderAbout();
   });
-
+  
 // --- Optional nicety: smooth scroll + target offset for sticky headers ---
 document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.style.scrollBehavior = 'smooth';
