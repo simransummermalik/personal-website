@@ -28,6 +28,13 @@ fetch('data/profile.json')
         if (l) l.href = data.links.linkedin;
       }
     }
+        // Skills
+    if (Array.isArray(data.skills)) {
+      const line = document.getElementById('skillsLine');
+      if (line) line.textContent = data.skills.join(' · ');
+    }
+  })
+  .catch(() => { /* no JSON? fine, fallback content stays */ });
 
     // Projects
     if (Array.isArray(data.projects)) {
@@ -95,14 +102,6 @@ fetch('data/profile.json')
         });
       }
     }
-
-    // Skills
-    if (Array.isArray(data.skills)) {
-      const line = document.getElementById('skillsLine');
-      if (line) line.textContent = data.skills.join(' · ');
-    }
-  })
-  .catch(() => { /* no JSON? fine, fallback content stays */ });
 // --- Fireflies spawner ---
 (function makeFireflies() {
   const container = document.getElementById('fireflies');
