@@ -6,7 +6,7 @@
     "linkedin": "https://www.linkedin.com/in/summermalik/"
   },
   "skills_photos": [
-  { "src": "assets/skills/python.png", "alt": "Python", "title": "Python" },
+  { "src": "assets/python.png", "alt": "Python", "title": "Python" },
   { "src": "assets/skills/js.png", "alt": "JavaScript", "title": "JavaScript" },
   { "src": "assets/skills/react.png", "alt": "React", "title": "React" },
   { "src": "assets/skills/qiskit.png", "alt": "Qiskit", "title": "Qiskit" },
