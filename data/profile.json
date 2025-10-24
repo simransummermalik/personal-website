@@ -9,8 +9,8 @@
   { "src": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/files/python-logo-only.svg", "alt": "Python", "title": "Python" },
   { "src": "assets/java-4-logo-svgrepo-com.svg", "alt": "Java", "title": "Java" },
   { "src": "assets/c-program-icon.svg", "alt": "C", "title": "C" },
-  { "src": "assets/C# (CSharp).svg", "alt": "C#", "title": "C#" },
-  { "src": "assets/C++ (CPlusPlus).svg", "alt": "C++", "title": "C++" }
+  { "src": "assets/C#(CSharp).svg", "alt": "C#", "title": "C#" },
+  { "src": "assets/C++(CPlusPlus).svg", "alt": "C++", "title": "C++" }
 ],
 
   "projects": [
