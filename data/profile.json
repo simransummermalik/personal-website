@@ -10,7 +10,9 @@
   { "src": "assets/java-4-logo-svgrepo-com.svg", "alt": "Java", "title": "Java" },
   { "src": "assets/c-program-icon.svg", "alt": "C", "title": "C" },
   { "src": "assets/c--4.svg", "alt": "C#", "title": "C#" },
-  { "src": "assets/c.svg", "alt": "C++", "title": "C++" }
+  { "src": "assets/c.svg", "alt": "C++", "title": "C++" },
+  { "src": "assets/r-lang.svg", "alt": "R", "title": "R" },
+  { "src": "assets/matlab.svg", "alt": "MATLAB", "title": "MATLAB" }
 ],
 
   "projects": [
