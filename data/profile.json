@@ -12,7 +12,8 @@
   { "src": "assets/c--4.svg", "alt": "C#", "title": "C#" },
   { "src": "assets/c.svg", "alt": "C++", "title": "C++" },
   { "src": "assets/r-lang.svg", "alt": "R", "title": "R" },
-  { "src": "assets/matlab.svg", "alt": "MATLAB", "title": "MATLAB" }
+  { "src": "assets/matlab.svg", "alt": "MATLAB", "title": "MATLAB" },
+  {"src":"assets/mysql-logo-pure.svg", "alt": "MYSQL", "title": "mySQL"}
 ],
 
   "projects": [
