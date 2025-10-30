@@ -17,10 +17,7 @@
 ],
 
   "projects": [
-    { "title": "GeneCrafter", "description": "DNA → playful traits with short “why it works” notes.", "tags": ["python","flask","biopython"] },
-    { "title": "SYN", "description": "Browser sign-language recognition (React + MediaPipe). 1st at UNCC Hackathon.", "tags": ["react","mediapipe","dl"] },
-    { "title": "QML Torch", "description": "Hybrid quantum-classical ML framework (project lead at CAIR).", "tags": ["pytorch","pennylane"] },
-    { "title": "BioForge", "description": "Humanity vs pathogen evolution sim (3rd on Devpost 2025).", "tags": ["python","react"] }
+    { "title": "Find All My Projects On GitHub!!!"}
   ],
   "research": [
     {
