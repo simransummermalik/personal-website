@@ -29,6 +29,16 @@ fetch('data/profile.json')
       return;
     }
 
+    // Name and Title (display in cover section)
+    if (data.name) {
+      const coverH1 = document.querySelector('#cover h1');
+      if (coverH1) coverH1.textContent = `hi, i'm ${data.name.split(' ')[0].toLowerCase()}`;
+    }
+    if (data.title) {
+      const deck = document.querySelector('#cover .deck');
+      if (deck) deck.textContent = data.title;
+    }
+
     // About
     if (data.about) {
       const about = document.getElementById('aboutText');
@@ -84,7 +94,9 @@ fetch('data/profile.json')
             <div class="rule"></div>
             <div class="row-body">
               <h3>${r.title || ''}</h3>
+              ${r.org ? `<p style="font-style:italic;margin:4px 0">${r.org}${r.role ? ` — ${r.role}` : ''}${r.when ? ` (${r.when})` : ''}</p>` : ''}
               <p>${r.description || ''}</p>
+              ${r.impact ? `<p style="margin-top:8px"><strong>Impact:</strong> ${r.impact}</p>` : ''}
               ${r.progress ? `<p class="progress">Progress: ${r.progress}</p>` : ''}
             </div>`;
           researchList.appendChild(el);
@@ -92,16 +104,34 @@ fetch('data/profile.json')
       }
     }
 
-    // Experience
-    if (Array.isArray(data.experience)) {
+    // Leadership & Experience
+    if (Array.isArray(data.leadership)) {
       const list = document.getElementById('expList');
       if (list) {
         list.innerHTML = '';
-        data.experience.forEach(e => {
+
+        // Add leadership items
+        data.leadership.forEach(e => {
           const li = document.createElement('li');
-          li.textContent = `${e.org} — ${e.role} (${e.when})${e.summary ? ': ' + e.summary : ''}`;
+          li.innerHTML = `<strong>${e.role}</strong> — ${e.org} (${e.when})<br>${e.summary || ''}`;
           list.appendChild(li);
         });
+
+        // Add other experience if exists
+        if (Array.isArray(data.other_experience) && data.other_experience.length > 0) {
+          // Add separator
+          const separator = document.createElement('li');
+          separator.innerHTML = '<br><strong>Other Experience:</strong>';
+          separator.style.listStyle = 'none';
+          separator.style.marginTop = '16px';
+          list.appendChild(separator);
+
+          data.other_experience.forEach(e => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${e.role}</strong> — ${e.org} (${e.when})<br>${e.summary || ''}`;
+            list.appendChild(li);
+          });
+        }
       }
     }
 
@@ -112,7 +142,11 @@ fetch('data/profile.json')
         list.innerHTML = '';
         data.education.forEach(ed => {
           const li = document.createElement('li');
-          li.textContent = `${ed.school} — ${ed.degree}${ed.when ? ' (' + ed.when + ')' : ''}`;
+          li.innerHTML = `
+            <strong>${ed.school}</strong> — ${ed.degree}${ed.when ? ' (' + ed.when + ')' : ''}
+            ${ed.minor ? `<br>${ed.minor}` : ''}
+            ${ed.focus ? `<br><em>Focus:</em> ${ed.focus}` : ''}
+          `;
           list.appendChild(li);
         });
       }

@@ -1,6 +1,8 @@
 {
-  "about": "I’m a CS × Biology (bioinformatics) undergrad student with a minor in data science and AI. I also lead a quantum research division at Charlotte AI research and am a Founder and President of a career ready club at UNCC called HAVK!",
-  "email": "CANNOT SEE RIGHT NOW!!!!",
+  "name": "Summer Malik",
+  "title": "Computational Biology Researcher | Quantum Machine Learning | Cancer Genomics",
+  "about": "I absolutely love everything computer science—whether it's quantum computing, machine learning, bioinformatics, or just building cool stuff with code! Right now I'm leading QML Torch at Charlotte AI Research (building quantum-classical ML frameworks with PyTorch) and running HAVK, where we host bi-weekly online hackathons for 700+ students. There's nothing more exciting than watching people build amazing projects in 48 hours! Beyond coding, I'm obsessed with astrophysics and space—black holes, neutron stars, cosmology, all of it. I love exploring how computation helps us understand the universe, from quantum algorithms to analyzing cosmic data. If it involves solving hard problems, learning something new, or pushing the boundaries of what's possible with tech, I'm 100% there!",
+  "email": "simransummermalik@gmail.com",
   "links": {
     "github": "https://github.com/simransummermalik",
     "linkedin": "https://www.linkedin.com/in/summermalik/"
@@ -50,22 +52,78 @@
   ],
   "research": [
     {
-      "title": "Cancer Genomics — The Jackson Laboratory",
-      "description": "Building a resistance-prediction pipeline for EGFR-mutant cancers using OncoKB, COSMIC, and CIViC; integrating pathway mapping and mutation impact scoring.",
-      "progress": "Model tuning (Python, Biopython); validating on curated cohorts."
+      "title": "QML Torch: Quantum Machine Learning Framework",
+      "org": "Charlotte AI Research (CAIR Lab)",
+      "role": "Project Lead & Principal Developer",
+      "when": "Aug 2025–Present",
+      "description": "Leading the architecture and development of QML Torch, an open-source PyTorch extension enabling differentiable quantum circuit layers within classical deep learning pipelines. Framework integrates PennyLane and Qiskit backends for seamless hybrid quantum-classical experimentation.",
+      "impact": "Designed research-grade API with emphasis on scientific reproducibility; implemented comprehensive CI/CD pipelines for GPU/HPC validation; created curated benchmark suite and tutorial ecosystem for accessibility. Coordinating multi-contributor development spanning core engineering, documentation, and scientific outreach."
     },
     {
-      "title": "QML Torch Research — CAIR Lab",
-      "description": "Exploring hybrid quantum-classical models for small biological datasets; testing quantum kernels for classification.",
-      "progress": "Preparing poster for undergraduate research symposium."
+      "title": "Cancer Genomics & Precision Oncology Research",
+      "org": "The Jackson Laboratory",
+      "role": "Research Intern, Summer Institute",
+      "when": "Jun–Jul 2025",
+      "description": "Selected through highly competitive process for elite research cohort at JAX, a global leader in cancer genomics and precision medicine. Received graduate-level training in translational oncology, molecular diagnostics, and computational genomics under internationally recognized scientists.",
+      "impact": "Applied advanced NGS data analysis and variant pathogenicity assessment using clinical-grade databases (OncoKB, COSMIC, CIViC). Developed computational pipeline modeling therapeutic resistance mechanisms in EGFR-mutant cancers; integrated driver/passenger mutation classification, variant tier stratification, and treatment outcome prediction frameworks. Contributed to multi-disciplinary inquiry project at intersection of bioinformatics and clinical decision-making."
     }
   ],
-  "experience": [
-    { "role": "Co-Founder & President", "org": "HAVK", "when": "2025–present", "summary": "700+ member hackathon org; ops, partnerships, mentorship." },
-    { "role": "Cancer Genomics Intern", "org": "The Jackson Laboratory", "when": "Jun–Jul 2025", "summary": "Pipelines; resistance modeling via OncoKB/COSMIC/CIViC." }
+  "leadership": [
+    {
+      "role": "Co-Founder & President",
+      "org": "HAVK (Hackathons, Advancement, Vision, Knowledge)",
+      "when": "Jun 2025–Present",
+      "summary": "Founded and scaled bi-weekly online hackathon series to 700+ participants from diverse technical backgrounds. Lead all strategic operations including community building (Discord/Devpost), technical mentorship, and partnership development. Expanding into registered student organization with corporate sponsorship pipeline and large-scale event infrastructure."
+    },
+    {
+      "role": "Engagement Lead",
+      "org": "CS Create (UNC Charlotte)",
+      "when": "Aug 2025–Present",
+      "summary": "Officer responsible for technical workshops, project mentorship, and fostering inclusive computing community for underrepresented students in computer science."
+    },
+    {
+      "role": "Passport Program Leader",
+      "org": "UNC Charlotte",
+      "when": "May 2024–May 2025",
+      "summary": "Selected as 1 of 12 peer mentors for dual-enrollment students transitioning between CPCC and UNC Charlotte. Provided academic guidance, community building, and leadership development for incoming cohorts."
+    }
+  ],
+  "other_experience": [
+    {
+      "role": "STEAM Camp Counselor",
+      "org": "YMCA of the USA",
+      "when": "Jun–Aug 2025",
+      "summary": "Facilitated hands-on science, technology, engineering, arts, and mathematics activities for youth; fostered inclusive learning environment for STEM skill development."
+    },
+    {
+      "role": "Healthcare Technology Intern (Team Captain)",
+      "org": "Atrium Health × Charlotte MYEP",
+      "when": "Jun–Aug 2021",
+      "summary": "Led team through virtual workforce development program focused on healthcare innovation. Developed mobile health application concept addressing community health needs; conducted data analysis, population health assessment, and technology solution design. Guided colleagues' projects and coordinated team deliverables."
+    },
+    {
+      "role": "Entrepreneur",
+      "org": "Silicon Valley @ Charlotte (Pitch Fest)",
+      "when": "2020–2021",
+      "summary": "Participated in entrepreneurship education program; developed business concepts and presented technology venture pitches."
+    }
   ],
   "education": [
-    { "school": "UNC Charlotte", "degree": "B.S. Computer Science & Biology (Bioinformatics)", "when": "in progress" }
+    {
+      "school": "University of North Carolina at Charlotte",
+      "degree": "B.S. Computer Science & Biology (Bioinformatics Concentration)",
+      "minor": "Minor in Artificial Intelligence & Data Science",
+      "when": "Expected 2026",
+      "focus": "Computational biology, machine learning for genomics, quantum computing, bioinformatics algorithms, statistical modeling, molecular diagnostics"
+    }
   ],
+  "technical_expertise": {
+    "computational_biology": ["NGS data analysis", "Variant calling & annotation", "Pathway analysis", "Molecular diagnostics", "FASTA/FASTQ processing", "Biopython", "BioPerl", "NCBI BLAST"],
+    "machine_learning": ["Deep learning (PyTorch, TensorFlow)", "Quantum machine learning", "Scikit-learn", "Statistical modeling (R, MATLAB)", "Hypothesis testing"],
+    "data_science": ["Pandas", "NumPy", "Data visualization (Matplotlib, Plotly, Tableau, Power BI)", "Big Data (Hadoop, Spark)"],
+    "software_engineering": ["Python", "Java", "C/C++/C#", "R", "MATLAB", "SQL", "JavaScript/TypeScript", "Node.js", "React", "Go", "Spring Boot"],
+    "infrastructure": ["Linux/Unix", "Docker", "Kubernetes", "AWS", "Azure", "Google Cloud", "CI/CD (Jenkins, GitHub Actions)", "HPC systems"],
+    "specialized": ["Arduino", "Raspberry Pi", "IoT", "Embedded systems", "CAD (AutoCAD, SolidWorks)"]
+  },
   "skills": []
 }
